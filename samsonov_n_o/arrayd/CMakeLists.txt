@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24.2)
 
-project(arrayD)
+project(arrayd)
 
 include_directories(arr.lib)
 
