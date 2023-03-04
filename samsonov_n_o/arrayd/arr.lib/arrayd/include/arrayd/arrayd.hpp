@@ -1,5 +1,8 @@
+#ifndef ARRAYD
+#define ARRAYD
 
 #include <iosfwd>
+#include <cstddef> // RTFM!!!!!
 #include <cstdint>
 
 class ArrayD {
@@ -20,3 +23,5 @@ private:
     ptrdiff_t ssize_{0};
     double* data_{nullptr};
 };
+
+#endif

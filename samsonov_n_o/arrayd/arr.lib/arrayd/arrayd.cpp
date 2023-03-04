@@ -1,6 +1,6 @@
 #include <iosfwd>
 #include <sstream>
-#include "arrayD.hpp"
+#include <arrayd/arrayd.hpp>
 
 /*
 std::ostream& operator<<(std::ostream& ostrm, const Rational& rhs)

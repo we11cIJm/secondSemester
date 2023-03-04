@@ -1,6 +1,6 @@
 #include <iostream>
 #include <sstream>
-#include "rational.hpp"
+#include <rational/rational.hpp>
 
 std::ostream& operator<<(std::ostream& ostrm, const Rational& rhs)
 {

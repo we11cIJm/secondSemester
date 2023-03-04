@@ -1,12 +1,14 @@
-cmake_minimum_required(VERSION 3.24.2)
+cmake_minimum_required(VERSION 3.18)
+
+# option(HUNTER_ENABLED "Enable Hunter package manager support" OFF) 
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON) # after 3.26 ON by default
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "cmake")
 
 project(rational)
 
-include_directories(rat.lib)
+find_package(doctest CONFIG REQUIRED)
 
 add_subdirectory(rat.lib)
-
 add_subdirectory(rat.test)
 
-#find_path(DOCTEST_INCLUDE_DIR  NAMES rational.hpp PATH_SUFFIXES doctest)
-#include_directories(${DOCTEST_INCLUDE_DIR})

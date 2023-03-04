@@ -1,6 +1,6 @@
-#include "rational/rational.hpp"
+#include <rational/rational.hpp>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "doctest.h"
+#include <doctest/doctest.h>
 
 Rational rat1(1, 3);
 Rational rat2(1, 2);

@@ -1,2 +1,2 @@
 add_executable(tests tests.cpp)
-target_link_libraries(tests arrayLib)
+target_link_libraries(tests arrayd doctest::doctest)
