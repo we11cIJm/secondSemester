@@ -37,6 +37,8 @@ public:
     std::ostream& writeTo(std::ostream& ostrm) const;
     std::istream& readFrom(std::istream& istrm);
 
+    // int32_t & getDen(int32_t Den);
+
     static const char separator{ '/' };
 
     ~Rational() = default;

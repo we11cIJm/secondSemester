@@ -44,6 +44,11 @@ void Rational::Reduce()
     den /= r;
 }
 
+// int32_t & Rational::getDen(int32_t Den)
+// {
+//     return den;
+// }
+
 Rational& Rational::operator+=(const Rational& rhs)
 {
     num = rhs.den * num + rhs.num * den;

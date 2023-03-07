@@ -8,5 +8,5 @@ project(rational)
 
 find_package(doctest CONFIG REQUIRED)
 
-add_subdirectory(prj.lib)
+add_subdirectory(prj.lab)
 add_subdirectory(prj.test)
