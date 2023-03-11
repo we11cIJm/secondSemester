@@ -12,16 +12,27 @@ std::istream& operator>>(std::istream& istrm, Rational& rhs)
 }
 
 Rational::Rational() : num(0), den(1) {} // default constructor
-Rational::Rational(const int32_t rhs) : num(rhs), den(1) {} // int to rational
+Rational::Rational(int32_t rhs) : num(rhs), den(1) {} // int to rational
 Rational::Rational(const int32_t lhs, const int32_t rhs) // : num(lhs), den(rhs)
-{
-    if(rhs <= 0)
-    {
-        throw std::invalid_argument("Expected positive denominator");
+{   
+    if(rhs == 0) {
+        throw std::overflow_error("Warning: division by zero");
+        try {}
+        catch(const std::exception& ex)
+        {
+            std::cerr << ex.what() << '\n';
+        }
     }
-    num = lhs;
-    den = rhs;
-    Reduce();
+    if(rhs < 0) {
+        num = -lhs;
+        den = -rhs;
+        Reduce();
+    }
+    else {
+        num = lhs;
+        den = rhs;
+        Reduce();
+    }
 }
 Rational::Rational(const Rational& rhs) : num(rhs.num), den(rhs.den) {} // copy constructor
 
@@ -110,29 +121,35 @@ Rational& Rational::operator/=(const int32_t rhs)
     return *this;
 }
 
-bool Rational::operator==(const Rational& rhs)
+bool operator==(Rational lhs, const Rational& rhs)
 {
-    return (num == rhs.num && den == rhs.den); 
+    lhs -= rhs;
+    return (lhs.getNum() == 0);
 }
-bool Rational::operator!=(const Rational& rhs)
+bool operator!=(Rational lhs, const Rational& rhs)
 {
-    return (num != rhs.num || den != rhs.den);
+    lhs -= rhs;
+    return (lhs.getNum() != 0);
 }
-bool Rational::operator>(const Rational& rhs)
+bool operator>(Rational lhs, const Rational& rhs)
 {
-    return (num * rhs.den > rhs.num * den);
+    lhs -= rhs;
+    return (lhs.getNum() > 0);
 }
-bool Rational::operator<(const Rational& rhs)
+bool operator>=(Rational lhs, const Rational& rhs)
 {
-    return (num * rhs.den < rhs.num * den);
+    lhs -= rhs;
+    return (lhs.getNum() >= 0);
 }
-bool Rational::operator>=(const Rational& rhs)
+bool operator<(const Rational& lhs, Rational rhs)
 {
-    return (num * rhs.den >= rhs.num * den);
+    rhs -= lhs;
+    return (rhs.getNum() > 0);
 }
-bool Rational::operator<=(const Rational& rhs)
+bool operator<=(const Rational& lhs, Rational rhs)
 {
-    return (num * rhs.den <= rhs.num * den);
+    rhs -= lhs;
+    return (rhs.getNum() >= 0);
 }
 
 Rational operator+(const Rational& lhs, const Rational& rhs)

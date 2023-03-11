@@ -9,7 +9,7 @@ class Rational
 {
 public:
     Rational();
-    Rational(const int32_t rhs);
+    Rational(int32_t rhs);
     Rational(const int32_t lhs, const int32_t rhs);
     Rational(const Rational& rhs);
 
@@ -23,23 +23,20 @@ public:
     Rational& operator*=(const int32_t rhs);
     Rational& operator/=(const Rational& rhs);
     Rational& operator/=(const int32_t rhs);
-    bool operator==(const Rational& rhs);
-    bool operator!=(const Rational& rhs);
-    bool operator>(const Rational& rhs);
-    bool operator<(const Rational& rhs);
-    bool operator>=(const Rational& rhs);
-    bool operator<=(const Rational& rhs);
+
     Rational& operator++();
     Rational operator++(int);
     Rational& operator--();
     Rational operator--(int);
+    int32_t & getNum() { return num; }
+    // int32_t & getDen() { return den; }
 
     std::ostream& writeTo(std::ostream& ostrm) const;
     std::istream& readFrom(std::istream& istrm);
 
-    // int32_t & getDen(int32_t Den);
-
     static const char separator{ '/' };
+
+
 
     ~Rational() = default;
 
@@ -63,5 +60,12 @@ Rational operator*(const int32_t lhs, const Rational& rhs);
 Rational operator/(const Rational& lhs, const Rational& rhs);
 Rational operator/(const Rational& lhs, const int32_t rhs);
 Rational operator/(const int32_t lhs, const Rational& rhs);
+
+bool operator==(Rational lhs, const Rational& rhs);
+bool operator!=(Rational lhs, const Rational& rhs);
+bool operator>(Rational lhs, const Rational& rhs);
+bool operator>=(Rational lhs, const Rational& rhs);
+bool operator<(const Rational& lhs, Rational rhs);
+bool operator<=(const Rational& lhs, Rational rhs);
 
 #endif

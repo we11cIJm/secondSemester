@@ -1,8 +1,7 @@
-add_library(rational rational.cpp include/rational/rational.hpp) # adding a library
-set_property(TARGET rational PROPERTY PUBLIC_HEADER rational.hpp)
-# setting a property: target(executable or library), property(public or private)
+add_library(rational include/rational/rational.hpp rational.cpp)
 
-# what this things below are doing?
+set_property(TARGET rational PROPERTY PUBLIC_HEADER rational.hpp)
+
 target_include_directories(rational PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>

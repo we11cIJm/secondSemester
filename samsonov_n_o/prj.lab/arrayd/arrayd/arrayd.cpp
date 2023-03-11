@@ -2,17 +2,6 @@
 #include <sstream>
 #include <arrayd/arrayd.hpp>
 
-/*
-std::ostream& operator<<(std::ostream& ostrm, const Rational& rhs)
-{
-    return rhs.writeTo(ostrm);
-}
-std::istream& operator>>(std::istream& istrm, Rational& rhs)
-{
-    return rhs.readFrom(istrm);
-}
-*/
-
 ArrayD::ArrayD(const ptrdiff_t ssizeInp) : ssize_(ssizeInp), data_(new double[ssizeInp]) {} // ctor with input size
 ArrayD::ArrayD(ArrayD const& arrInp) : ssize_(arrInp.ssize_), data_(new double[ssize_]) { // copy ctor
     for(int i = 0; i < ssize_; ++i) {

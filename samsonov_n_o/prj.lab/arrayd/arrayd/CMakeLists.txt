@@ -1,8 +1,7 @@
-add_library(arrayd arrayd.cpp include/arrayd/arrayd.hpp) # adding a library
-set_property(TARGET arrayd PROPERTY PUBLIC_HEADER arrayd.hpp)
-# setting a property: target(executable or library), property(public or private)
+add_library(arrayd arrayd.cpp include/arrayd/arrayd.hpp)
 
-# what this things below are doing?
+set_property(TARGET arrayd PROPERTY PUBLIC_HEADER arrayd.hpp)
+
 target_include_directories(arrayd PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>

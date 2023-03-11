@@ -2,8 +2,14 @@
 #define ARRAYD
 
 #include <iosfwd>
-#include <cstddef> // RTFM!!!!!
+#include <cstddef> 
 #include <cstdint>
+
+/*
+<iosfwd> doesn't contain type ptrdiff_t,
+but <iostream> does
+<cstddef> - lib for ptrdiff_t type
+*/
 
 class ArrayD {
 public:

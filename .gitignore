@@ -1,3 +1,8 @@
+# directories
 build/
-.gitignore.swp
 .vs/
+.vscode/
+
+#files
+.gitignore.swp
+samsonov_n_o.code-workspace
