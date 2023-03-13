@@ -11,7 +11,7 @@ std::istream& operator>>(std::istream& istrm, Rational& rhs)
     return rhs.readFrom(istrm);
 }
 
-Rational::Rational() : num(0), den(1) {} // default constructor
+Rational::Rational() : num(0), den(1) {} /* default ctor */
 Rational::Rational(int32_t rhs) : num(rhs), den(1) {} // int to rational
 Rational::Rational(const int32_t lhs, const int32_t rhs) // : num(lhs), den(rhs)
 {   
@@ -27,7 +27,7 @@ Rational::Rational(const int32_t lhs, const int32_t rhs) // : num(lhs), den(rhs)
         num = -lhs;
         den = -rhs;
         Reduce();
-    }
+    }   
     else {
         num = lhs;
         den = rhs;
@@ -55,21 +55,10 @@ void Rational::Reduce()
     den /= r;
 }
 
-// int32_t & Rational::getDen(int32_t Den)
-// {
-//     return den;
-// }
-
 Rational& Rational::operator+=(const Rational& rhs)
 {
     num = rhs.den * num + rhs.num * den;
     den *= rhs.den;
-    Reduce();
-    return *this;
-}
-Rational& Rational::operator+=(const int32_t rhs)
-{
-    num += rhs * den;
     Reduce();
     return *this;
 }
@@ -80,22 +69,10 @@ Rational& Rational::operator-=(const Rational& rhs)
     Reduce();
     return *this;
 }
-Rational& Rational::operator-=(const int32_t rhs)
-{
-    num -= rhs * den;
-    Reduce();
-    return *this;
-}
 Rational& Rational::operator*=(const Rational& rhs)
 {
     num *= rhs.num;
     den *= rhs.den;
-    Reduce();
-    return *this;
-}
-Rational& Rational::operator*=(const int32_t rhs)
-{
-    num *= rhs;
     Reduce();
     return *this;
 }
@@ -107,16 +84,6 @@ Rational& Rational::operator/=(const Rational& rhs)
     }
     num *= rhs.den;
     den *= rhs.num;
-    Reduce();
-    return *this;
-}
-Rational& Rational::operator/=(const int32_t rhs)
-{
-    if(rhs == 0)
-    {
-        throw std::invalid_argument("Division by zero");
-    }
-    den *= rhs;
     Reduce();
     return *this;
 }
@@ -224,18 +191,22 @@ Rational operator/(const Rational& lhs, const Rational& rhs)
 }
 Rational operator/(const Rational& lhs, const int32_t rhs)
 {
+    if(rhs == 0) {
+        throw std::invalid_argument("division by zero");
+    }
     Rational div(lhs);
-    div *= rhs;
+    div /= rhs;
     div.Reduce();
     return div;
 }
 Rational operator/(const int32_t lhs, const Rational& rhs)
 {
     Rational div(lhs);
-    div *= lhs;
+    div /= rhs;
     div.Reduce();
     return div;
 }
+
 Rational& Rational::operator++()
 {
     num += den;
@@ -244,9 +215,9 @@ Rational& Rational::operator++()
 }
 Rational Rational::operator++(int)
 {
-    Rational tmp(*this);
-    *this += 1;
-    return tmp;
+    Rational oldValue(*this);
+    ++(*this);
+    return oldValue;
 }
 Rational& Rational::operator--()
 {
@@ -256,9 +227,9 @@ Rational& Rational::operator--()
 }
 Rational Rational::operator--(int)
 {
-    Rational tmp(*this);
-    *this -= 1;
-    return tmp;
+    Rational oldValue(*this);
+    --(*this);
+    return oldValue;
 }
 
 std::ostream& Rational::writeTo(std::ostream& ostrm) const
@@ -277,10 +248,13 @@ std::istream& Rational::readFrom(std::istream& istrm)
     {
         if(sep == separator)
         {
-            if(denInp <= 0)
+            if(denInp == 0)
             {
-                throw std::invalid_argument("Expected positive denominator");
+                throw std::invalid_argument("expected positive denominator");
             }
+            // else if(denInp < 0) {
+            //     istrm.setstate(std::ios_base::badbit);
+            // }
             num = numInp;
             den = denInp;
             Reduce();
@@ -292,3 +266,4 @@ std::istream& Rational::readFrom(std::istream& istrm)
     }
     return istrm;
 }
+

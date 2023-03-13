@@ -16,13 +16,9 @@ public:
     int32_t NOD(int32_t lhs, int32_t rhs);
     void Reduce();
     Rational& operator+=(const Rational& rhs);
-    Rational& operator+=(const int32_t rhs);
     Rational& operator-=(const Rational& rhs);
-    Rational& operator-=(const int32_t rhs);
     Rational& operator*=(const Rational& rhs);
-    Rational& operator*=(const int32_t rhs);
     Rational& operator/=(const Rational& rhs);
-    Rational& operator/=(const int32_t rhs);
 
     Rational& operator++();
     Rational operator++(int);
@@ -35,8 +31,6 @@ public:
     std::istream& readFrom(std::istream& istrm);
 
     static const char separator{ '/' };
-
-
 
     ~Rational() = default;
 
