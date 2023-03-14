@@ -136,28 +136,15 @@ TEST_CASE("compound assignment")
     CHECK(Rational(3, 2) == (Rational(1, 2) /= Rational(1, 3)));
 }
 
-
-// #include <iostream>
-// #include <sstream>
-
-bool testParse(const std::string& str) {
-    using namespace std;
-    istringstream istrm(str);
-    Rational rat;
-    istrm >> rat;
-    if(istrm.good()) {
-        cout << "Read success: " << str << " -> " << rat << endl;
-    } else {
-        cout << "Read error: " << str << " -> " << rat << endl;
+TEST_CASE("i/o test") {
+    Rational test1;
+    Rational test2;
+    try {
+        std::cin >> test1 >> test2;
+        std::cout << test1 << std::endl;
+        std::cout << test2 << std::endl;
+        std::cout << (test1 == test2) << '\n';
+    } catch(const std::exception& ex) {
+        std::cerr << ex.what() << '\n';
     }
-    return istrm.good();
-}
-
-TEST_CASE("test parse") {
-    using namespace std;
-    Rational test;
-    test += Rational(9/8);
-    testParse("7/9");
-    testParse("2/-5");
-    testParse("1/0");
 }
