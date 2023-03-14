@@ -13,8 +13,9 @@ public:
     Rational(const int32_t lhs, const int32_t rhs);
     Rational(const Rational& rhs);
 
-    int32_t NOD(int32_t lhs, int32_t rhs);
+    int32_t Nod(int32_t lhs, int32_t rhs);
     void Reduce();
+    // int32_t ToInt();
     Rational& operator+=(const Rational& rhs);
     Rational& operator-=(const Rational& rhs);
     Rational& operator*=(const Rational& rhs);
@@ -24,13 +25,13 @@ public:
     Rational operator++(int);
     Rational& operator--();
     Rational operator--(int);
-    int32_t & getNum() { return num; }
-    // int32_t & getDen() { return den; }
-
-    std::ostream& writeTo(std::ostream& ostrm) const;
-    std::istream& readFrom(std::istream& istrm);
+    int32_t & GetNum() { return num; }
+    int32_t & GetDen() { return den; }
 
     static const char separator{ '/' };
+
+    std::ostream& WriteTo(std::ostream& ostrm) const;
+    std::istream& ReadFrom(std::istream& istrm);
 
     ~Rational() = default;
 
