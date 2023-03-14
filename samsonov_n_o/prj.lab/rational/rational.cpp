@@ -246,14 +246,15 @@ Rational Rational::operator--(int)
 
 std::ostream& Rational::WriteTo(std::ostream& ostrm) const
 {
-    if(den < 0) {
-        // ToInt();
-        ostrm << -num << separator << -den;
-    }
-    else {
-        // ToInt();
-        ostrm << num << separator << den;
-    }
+    // if(den < 0) {
+    //     // ToInt();
+    //     ostrm << -num << separator << -den;
+    // }
+    // else {
+    //     // ToInt();
+    //     ostrm << num << separator << den;
+    // }
+    ostrm << num << separator << den;
     return ostrm;
 }
 
@@ -267,7 +268,7 @@ std::istream& Rational::ReadFrom(std::istream& istrm)
     {
         if(sep == separator)
         {
-            if(denInp == 0)
+            if(denInp <= 0)
             {
                 throw std::invalid_argument("expected positive denominator");
             }
