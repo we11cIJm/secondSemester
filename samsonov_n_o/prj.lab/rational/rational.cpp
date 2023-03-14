@@ -4,17 +4,17 @@
 
 std::ostream& operator<<(std::ostream& ostrm, const Rational& rhs)
 {
-    return rhs.writeTo(ostrm);
+    return rhs.WriteTo(ostrm);
 }
 std::istream& operator>>(std::istream& istrm, Rational& rhs)
 {
-    return rhs.readFrom(istrm);
+    return rhs.ReadFrom(istrm);
 }
 
 Rational::Rational() : num(0), den(1) {} /* default ctor */
 Rational::Rational(int32_t rhs) : num(rhs), den(1) {} // int to rational
 Rational::Rational(const int32_t lhs, const int32_t rhs) // : num(lhs), den(rhs)
-{   
+{
     if(rhs == 0) {
         throw std::overflow_error("Warning: division by zero");
         try {}
@@ -36,7 +36,7 @@ Rational::Rational(const int32_t lhs, const int32_t rhs) // : num(lhs), den(rhs)
 }
 Rational::Rational(const Rational& rhs) : num(rhs.num), den(rhs.den) {} // copy constructor
 
-int32_t Rational::NOD(int32_t lhs, int32_t rhs) // here: lhs - numenator, rhs - denomenator, return NOD
+int32_t Rational::Nod(int32_t lhs, int32_t rhs) // here: lhs - numenator, rhs - denomenator, return Nod
 {
     int32_t remain = 0;
     while(rhs != 0)
@@ -50,10 +50,22 @@ int32_t Rational::NOD(int32_t lhs, int32_t rhs) // here: lhs - numenator, rhs - 
 
 void Rational::Reduce()
 {
-    int32_t r = NOD(std::abs(num), den);
+    int32_t r = Nod(std::abs(num), den);
     num /= r;
     den /= r;
 }
+
+// int32_t Rational::ToInt() {
+//     // if(den == 1) {
+//     //     int32_t Int = num;
+//     //     (*this) = Int;
+//     // }
+//     // return *this;
+//     // return static_cast<double>(*this);
+//     if(den == 1) {
+//         double tmp = 
+//     }
+// }
 
 Rational& Rational::operator+=(const Rational& rhs)
 {
@@ -91,32 +103,32 @@ Rational& Rational::operator/=(const Rational& rhs)
 bool operator==(Rational lhs, const Rational& rhs)
 {
     lhs -= rhs;
-    return (lhs.getNum() == 0);
+    return (lhs.GetNum() == 0);
 }
 bool operator!=(Rational lhs, const Rational& rhs)
 {
     lhs -= rhs;
-    return (lhs.getNum() != 0);
+    return (lhs.GetNum() != 0);
 }
 bool operator>(Rational lhs, const Rational& rhs)
 {
     lhs -= rhs;
-    return (lhs.getNum() > 0);
+    return (lhs.GetNum() > 0);
 }
 bool operator>=(Rational lhs, const Rational& rhs)
 {
     lhs -= rhs;
-    return (lhs.getNum() >= 0);
+    return (lhs.GetNum() >= 0);
 }
 bool operator<(const Rational& lhs, Rational rhs)
 {
     rhs -= lhs;
-    return (rhs.getNum() > 0);
+    return (rhs.GetNum() > 0);
 }
 bool operator<=(const Rational& lhs, Rational rhs)
 {
     rhs -= lhs;
-    return (rhs.getNum() >= 0);
+    return (rhs.GetNum() >= 0);
 }
 
 Rational operator+(const Rational& lhs, const Rational& rhs)
@@ -232,13 +244,20 @@ Rational Rational::operator--(int)
     return oldValue;
 }
 
-std::ostream& Rational::writeTo(std::ostream& ostrm) const
+std::ostream& Rational::WriteTo(std::ostream& ostrm) const
 {
-    ostrm << num << separator << den;
+    if(den < 0) {
+        // ToInt();
+        ostrm << -num << separator << -den;
+    }
+    else {
+        // ToInt();
+        ostrm << num << separator << den;
+    }
     return ostrm;
 }
 
-std::istream& Rational::readFrom(std::istream& istrm)
+std::istream& Rational::ReadFrom(std::istream& istrm)
 {
     int32_t numInp(0);
     char sep{ '/' };
@@ -252,12 +271,10 @@ std::istream& Rational::readFrom(std::istream& istrm)
             {
                 throw std::invalid_argument("expected positive denominator");
             }
-            // else if(denInp < 0) {
-            //     istrm.setstate(std::ios_base::badbit);
-            // }
             num = numInp;
             den = denInp;
             Reduce();
+            // ToInt();
         }
         else
         {
