@@ -12,16 +12,16 @@ std::istream& operator>>(std::istream& istrm, Rational& rhs)
 }
 
 Rational::Rational() : num(0), den(1) {} /* default ctor */
-Rational::Rational(int32_t rhs) : num(rhs), den(1) {} // int to rational
+Rational::Rational(const int32_t rhs) : num(rhs), den(1) {} // int to rational
 Rational::Rational(const int32_t lhs, const int32_t rhs) // : num(lhs), den(rhs)
 {
     if(rhs == 0) {
-        throw std::overflow_error("Warning: division by zero");
-        try {}
-        catch(const std::exception& ex)
-        {
-            std::cerr << ex.what() << '\n';
-        }
+        throw std::overflow_error("division by zero");
+        // try {}
+        // catch(const std::exception& ex)
+        // {
+        //     std::cerr << ex.what() << '\n';
+        // }
     }
     if(rhs < 0) {
         num = -lhs;
@@ -35,6 +35,12 @@ Rational::Rational(const int32_t lhs, const int32_t rhs) // : num(lhs), den(rhs)
     }
 }
 Rational::Rational(const Rational& rhs) : num(rhs.num), den(rhs.den) {} // copy constructor
+
+Rational& Rational::operator=(const Rational& rhs) {
+	num = rhs.num;
+	den = rhs.den;
+	return *this;
+}
 
 int32_t Rational::Nod(int32_t lhs, int32_t rhs) // here: lhs - numenator, rhs - denomenator, return Nod
 {
@@ -67,6 +73,14 @@ void Rational::Reduce()
 //     }
 // }
 
+Rational Rational::operator-() {
+	Rational newR(*this);
+	newR.num = -num;
+	return newR;
+}
+
+
+
 Rational& Rational::operator+=(const Rational& rhs)
 {
     num = rhs.den * num + rhs.num * den;
@@ -92,7 +106,7 @@ Rational& Rational::operator/=(const Rational& rhs)
 {
     if(rhs.den == 0)
     {
-        throw std::invalid_argument("Division by zero");
+        throw std::invalid_argument("division by zero");
     }
     num *= rhs.den;
     den *= rhs.num;
@@ -261,26 +275,37 @@ std::ostream& Rational::WriteTo(std::ostream& ostrm) const
 std::istream& Rational::ReadFrom(std::istream& istrm)
 {
     int32_t numInp(0);
-    char sep{ '/' };
+    char sep{'/'};
+    // char enter{'\t'};
     int32_t denInp(1);
-    istrm >> numInp >> sep >> denInp;
-    if(istrm.good())
-    {
-        if(sep == separator)
+    try {
+        istrm >> numInp >> sep >> denInp;
+        if(istrm.good())
         {
-            if(denInp <= 0)
+            if(sep == separator) //  && sep != enter
             {
-                throw std::invalid_argument("expected positive denominator");
+                if(denInp <= 0)
+                {
+                    throw std::invalid_argument("expected positive denominator");
+                }
+                // if(denInp < 0) {
+                //     istrm.setstate(std::ios_base::badbit);
+                //     return istrm;
+                // }
+                num = numInp;
+                den = denInp;
+                Reduce();
+                // ToInt();
+            } else {
+                throw std::invalid_argument("Incorrect input");
             }
-            num = numInp;
-            den = denInp;
-            Reduce();
-            // ToInt();
-        }
-        else
-        {
+        } else {
             istrm.setstate(std::ios_base::failbit);
         }
+    } catch (const std::exception& ex) {
+        std::cerr << ex.what() << '\n';
+    } catch (...) {
+        std::cerr << "smth went wrong\n";
     }
     return istrm;
 }
