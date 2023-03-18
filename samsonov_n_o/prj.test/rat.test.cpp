@@ -59,22 +59,27 @@ TEST_CASE("Reducing")
 }
 
 Rational ct = Rational(3, 9);
+Rational copy_ctor = ct;
+Rational c1(3, 9);
+Rational c2 = -c1;
 TEST_CASE("Ctor")
 {
     CHECK(Rational(0) == Rational(0, 1));
     CHECK(Rational(3, 9) == ct);
+    CHECK(copy_ctor == Rational(3, 9));
+    std::cout << c2 << '\n';
 }
 
 TEST_CASE("unary oerations")
 {
     CHECK(++Rational(1, 5) == Rational(6, 5));
-    --Rational(1, 5);
+    // --Rational(1, 5);
     CHECK(Rational(1, 5)++ == Rational(1, 5));
-    --Rational(1, 5);
+    // --Rational(1, 5);
     CHECK(--Rational(1, 5) == Rational(-4, 5));
-    ++Rational(1, 5);
+    // ++Rational(1, 5);
     CHECK(Rational(1, 5)-- == Rational(1, 5));
-    ++Rational(1, 5);
+    // ++Rational(1, 5);
 
     CHECK(++Rational(-1, 5) == Rational(4, 5));
     --Rational(-1, 5);
@@ -136,15 +141,16 @@ TEST_CASE("compound assignment")
     CHECK(Rational(3, 2) == (Rational(1, 2) /= Rational(1, 3)));
 }
 
-TEST_CASE("i/o test") {
+/*TEST_CASE("i/o test") {
     Rational test1;
     Rational test2;
     try {
-        std::cin >> test1 >> test2;
+        std::cin >> test1; //>> test2;
         std::cout << test1 << std::endl;
-        std::cout << test2 << std::endl;
-        std::cout << (test1 == test2) << '\n';
+        // std::cout << test2 << std::endl;
+        // std::cout << (test1 == test2) << '\n';
     } catch(const std::exception& ex) {
         std::cerr << ex.what() << '\n';
     }
 }
+*/
