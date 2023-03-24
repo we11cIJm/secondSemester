@@ -20,9 +20,18 @@ ArrayD::ArrayD(const ArrayD& arrInp)
     ssize_(arrInp.ssize_), 
     realSize_(arrInp.realSize_),
     data_(new double[realSize_]) {
-    for(int i = 0; i < ssize_; ++i) {
-        data_[i] = arrInp.data_[i];
-    }
+        for(int i = 0; i < ssize_; ++i) {
+            data_[i] = arrInp.data_[i];
+        }
+}
+ArrayD::ArrayD(const std::ptrdiff_t size, const double& rvalue)
+    :
+    ssize_(size),
+    realSize_(ssize_ * 2),
+    data_(new double[realSize_]) {
+        for (int i = 0; i < ssize_; ++i) {
+            data_[i] = rvalue;
+        }
 }
 ArrayD& ArrayD::operator=(const ArrayD& rhs) {
     if(this != &rhs) { /* a != a : checking that it isn't the same object */
@@ -50,11 +59,11 @@ const double ArrayD::operator[](const std::ptrdiff_t index) const { /* read-only
     return *(data_ + index); // значение <return *(data_ + index)> или константную ссылку <return &data_[i];> (конструктор move)
 }
 
-std::ptrdiff_t ArrayD::GetSize() const noexcept {
+std::ptrdiff_t ArrayD::ssize() const noexcept {
     return ssize_;
 }
 
-void ArrayD::Resize(const std::ptrdiff_t newSize) {
+void ArrayD::resize(const std::ptrdiff_t newSize) {
     // double *pNewData = data_ + ssize_;
     if (newSize > realSize_) {
         // pNewData = new double[newSize - ssize_];
@@ -74,7 +83,7 @@ void ArrayD::insert(const std::ptrdiff_t index, const double& value) {
     if (ssize_ + 1 <= realSize_) {
         ssize_ += 1;
     } else {
-        Resize(ssize_ + 1);
+        resize(ssize_ + 1);
     }
     
     for (int i = ssize_; i > index; --i) {
@@ -93,6 +102,11 @@ void ArrayD::remove(const std::ptrdiff_t index) {
         throw std::out_of_range("index out of range");
     }
 }
+
+// void ArrayD::push_back(const double& lvalue) noexcept {
+//     ssize_ += 1;
+//     data_[ssize_] = lvalue;
+// }
 
 // std::ostream& ArrayD::ReadFrom(std::ostream& ostrm) const {
 //     ostrm << 
