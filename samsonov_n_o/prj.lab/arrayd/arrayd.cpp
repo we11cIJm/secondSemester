@@ -86,7 +86,7 @@ void ArrayD::insert(const std::ptrdiff_t index, const double& value) {
         resize(ssize_ + 1);
     }
     
-    for (int i = ssize_; i > index; --i) {
+    for (ptrdiff_t i = ssize_; i > index; --i) {
         data_[i] = data_[i-1];
     }
     data_[index] = value;
@@ -94,7 +94,7 @@ void ArrayD::insert(const std::ptrdiff_t index, const double& value) {
 
 void ArrayD::remove(const std::ptrdiff_t index) {
     if (index >= 0 && index < ssize_) {
-        for (int i = index; i < ssize_ - 1; ++i) {
+        for (ptrdiff_t i = index; i < ssize_ - 1; ++i) {
             data_[i] = data_[i+1];
         }
         ssize_ -= 1;
@@ -103,11 +103,8 @@ void ArrayD::remove(const std::ptrdiff_t index) {
     }
 }
 
-// void ArrayD::push_back(const double& lvalue) noexcept {
-//     ssize_ += 1;
-//     data_[ssize_] = lvalue;
-// }
+void ArrayD::push_back(const double& lvalue) noexcept {
+    ssize_ += 1;
+    data_[ssize_ - 1] = lvalue;
+}
 
-// std::ostream& ArrayD::ReadFrom(std::ostream& ostrm) const {
-//     ostrm << 
-// }

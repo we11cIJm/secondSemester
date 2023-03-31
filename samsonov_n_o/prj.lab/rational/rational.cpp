@@ -88,10 +88,26 @@ Rational& Rational::operator+=(const Rational& rhs)
     Reduce();
     return *this;
 }
+Rational& Rational::operator+=(const int32_t& rhs)
+{
+    Rational tmp(rhs);
+    num = tmp.den * num + tmp.num * den;
+    den *= tmp.den;
+    Reduce();
+    return *this;
+}
 Rational& Rational::operator-=(const Rational& rhs)
 {
     num = rhs.den * num - rhs.num * den;
     den *= rhs.den;
+    Reduce();
+    return *this;
+}
+Rational& Rational::operator-=(const int32_t& rhs)
+{
+    Rational tmp(rhs);
+    num = tmp.den * num - tmp.num * den;
+    den *= tmp.den;
     Reduce();
     return *this;
 }
@@ -102,9 +118,15 @@ Rational& Rational::operator*=(const Rational& rhs)
     Reduce();
     return *this;
 }
+Rational& Rational::operator*=(const int32_t& rhs)
+{
+    num *= rhs;
+    Reduce();
+    return *this;
+}
 Rational& Rational::operator/=(const Rational& rhs)
 {
-    if(rhs.den == 0)
+    if(rhs.num == 0)
     {
         throw std::invalid_argument("division by zero");
     }
@@ -113,36 +135,124 @@ Rational& Rational::operator/=(const Rational& rhs)
     Reduce();
     return *this;
 }
+Rational& Rational::operator/=(const int32_t& rhs)
+{
+    if(rhs == 0)
+    {
+        throw std::invalid_argument("division by zero");
+    }
+    den *= rhs;
+    Reduce();
+    return *this;
+}
 
-bool operator==(Rational lhs, const Rational& rhs)
+bool operator==(const Rational& lhs, const Rational& rhs)
 {
-    lhs -= rhs;
-    return (lhs.GetNum() == 0);
+    Rational tmp(lhs);
+    tmp -= rhs;
+    return (tmp.GetNum() == 0);
 }
-bool operator!=(Rational lhs, const Rational& rhs)
+bool operator==(const int32_t& lhs, const Rational& rhs)
 {
-    lhs -= rhs;
-    return (lhs.GetNum() != 0);
+    Rational tmp(lhs);
+    tmp -= rhs;
+    return (tmp.GetNum() == 0);
 }
-bool operator>(Rational lhs, const Rational& rhs)
+bool operator==(const Rational& lhs, const int32_t& rhs)
 {
-    lhs -= rhs;
-    return (lhs.GetNum() > 0);
+    Rational tmp(lhs);
+    tmp -= rhs;
+    return (tmp.GetNum() == 0);
 }
-bool operator>=(Rational lhs, const Rational& rhs)
+bool operator!=(const Rational& lhs, const Rational& rhs)
 {
-    lhs -= rhs;
-    return (lhs.GetNum() >= 0);
+    Rational tmp(lhs);
+    tmp -= rhs;
+    return (tmp.GetNum() != 0);
 }
-bool operator<(const Rational& lhs, Rational rhs)
+bool operator!=(const int32_t& lhs, const Rational& rhs)
 {
-    rhs -= lhs;
-    return (rhs.GetNum() > 0);
+    Rational tmp(lhs);
+    tmp -= rhs;
+    return (tmp.GetNum() != 0);
 }
-bool operator<=(const Rational& lhs, Rational rhs)
+bool operator!=(const Rational& lhs, const int32_t& rhs)
 {
-    rhs -= lhs;
-    return (rhs.GetNum() >= 0);
+    Rational tmp(lhs);
+    tmp -= rhs;
+    return (tmp.GetNum() != 0);
+}
+bool operator>(const Rational& lhs, const Rational& rhs)
+{
+    Rational tmp(lhs);
+    tmp -= rhs;
+    return (tmp.GetNum() > 0);
+}
+bool operator>(const int32_t& lhs, const Rational& rhs)
+{
+    Rational tmp(lhs);
+    tmp -= rhs;
+    return (tmp.GetNum() > 0);
+}
+bool operator>(const Rational& lhs, const int32_t& rhs)
+{
+    Rational tmp(lhs);
+    tmp -= rhs;
+    return (tmp.GetNum() > 0);
+}
+bool operator>=(const Rational& lhs, const Rational& rhs)
+{
+    Rational tmp(lhs);
+    tmp -= rhs;
+    return (tmp.GetNum() >= 0);
+}
+bool operator>=(const int32_t& lhs, const Rational& rhs)
+{
+    Rational tmp(lhs);
+    tmp -= rhs;
+    return (tmp.GetNum() >= 0);
+}
+bool operator>=(const Rational& lhs, const int32_t& rhs)
+{
+    Rational tmp(lhs);
+    tmp -= rhs;
+    return (tmp.GetNum() >= 0);
+}
+bool operator<(const Rational& lhs, const Rational& rhs)
+{
+    Rational tmp(rhs);
+    tmp -= lhs;
+    return (tmp.GetNum() > 0);
+}
+bool operator<(const int32_t& lhs, const Rational& rhs)
+{
+    Rational tmp(rhs);
+    tmp -= lhs;
+    return (tmp.GetNum() > 0);
+}
+bool operator<(const Rational& lhs, const int32_t& rhs)
+{
+    Rational tmp(rhs);
+    tmp -= lhs;
+    return (tmp.GetNum() > 0);
+}
+bool operator<=(const Rational& lhs, const Rational& rhs)
+{
+    Rational tmp(rhs);
+    tmp -= lhs;
+    return (tmp.GetNum() >= 0);
+}
+bool operator<=(const int32_t& lhs, const Rational& rhs)
+{
+    Rational tmp(rhs);
+    tmp -= lhs;
+    return (tmp.GetNum() >= 0);
+}
+bool operator<=(const Rational& lhs, const int32_t& rhs)
+{
+    Rational tmp(rhs);
+    tmp -= lhs;
+    return (tmp.GetNum() >= 0);
 }
 
 Rational operator+(const Rational& lhs, const Rational& rhs)

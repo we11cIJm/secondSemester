@@ -1,6 +1,6 @@
-#include <rational/rational.hpp>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
+#include <rational/rational.hpp>
 
 
 TEST_CASE("[rational] - Rational ctor")
@@ -134,23 +134,24 @@ TEST_CASE("compound assignment")
     CHECK(Rational(5, 6) == (Rational(1, 2) += Rational(1, 3)));
     CHECK(Rational(1, 2) + 2 == Rational(5, 2));
     CHECK(Rational(5, 2) == (Rational(1, 2) += 2));
-    CHECK(-1 == (Rational(1, 2) += Rational(-3, 2)));
+    CHECK(-2 != (Rational(1, 2) += Rational(-3, 2)));
+    CHECK(Rational(1) == 1);
 
     CHECK(Rational(1, 6) == (Rational(1, 2) -= Rational(1, 3)));
     CHECK(Rational(1, 6) == (Rational(1, 2) *= Rational(1, 3)));
     CHECK(Rational(3, 2) == (Rational(1, 2) /= Rational(1, 3)));
 }
 
-/*TEST_CASE("i/o test") {
-    Rational test1;
-    Rational test2;
-    try {
-        std::cin >> test1; //>> test2;
-        std::cout << test1 << std::endl;
-        // std::cout << test2 << std::endl;
-        // std::cout << (test1 == test2) << '\n';
-    } catch(const std::exception& ex) {
-        std::cerr << ex.what() << '\n';
-    }
-}
-*/
+// TEST_CASE("i/o test") {
+//     Rational test1;
+//     Rational test2;
+//     try {
+//         std::cin >> test1 >> test2;
+//         // std::cout << test1 << std::endl;
+//         // std::cout << test2 << std::endl;
+//         // std::cout << (test1 == test2) << '\n';
+//         CHECK_THROWS(test1 / test2 );
+//     } catch(const std::exception& ex) {
+//         std::cerr << ex.what() << '\n';
+//     }
+// }

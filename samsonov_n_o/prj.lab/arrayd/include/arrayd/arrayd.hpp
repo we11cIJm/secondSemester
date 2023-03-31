@@ -7,7 +7,7 @@
 class ArrayD {
 public:
     ArrayD();
-    ArrayD(const std::ptrdiff_t size);
+    explicit ArrayD(const std::ptrdiff_t size);
     ArrayD(const ArrayD& arrInp);
 
     ArrayD(const std::ptrdiff_t size, const double& rvalue);
@@ -27,7 +27,7 @@ public:
     // void inc_for_size() {
     //     this->resize(ssize_ + 1);
     // }
-    // void push_back(const double& lvalue) noexcept;
+    void push_back(const double& lvalue) noexcept;
 
 private:
     std::ptrdiff_t ssize_{0};

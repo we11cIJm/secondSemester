@@ -1,8 +1,19 @@
 # directories
 build/
+out/
 .vs/
 .vscode/
 
 #files
 .gitignore.swp
 samsonov_n_o.code-workspace
+CMakePresets.json
+
+# Visual C++ cache files
+ipch
+.aps
+.ncb
+.opendb
+.opensdf
+.sdf
+.cachefile
