@@ -8,6 +8,7 @@ out/
 .gitignore.swp
 samsonov_n_o.code-workspace
 CMakePresets.json
+commands.txt
 
 # Visual C++ cache files
 ipch
