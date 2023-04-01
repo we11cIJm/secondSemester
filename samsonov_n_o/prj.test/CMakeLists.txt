@@ -1,6 +1,8 @@
 add_executable(rat.test rat.test.cpp)
 add_executable(arr.test arr.test.cpp)
 add_executable(matrixs.test matrixs.test.cpp)
+add_executable(tarr.test tarr.test.cpp)
 target_link_libraries(rat.test rational doctest::doctest)
 target_link_libraries(arr.test arrayd doctest::doctest)
 target_link_libraries(matrixs.test matrixs doctest::doctest)
+target_link_libraries(tarr.test arrayt doctest::doctest)
