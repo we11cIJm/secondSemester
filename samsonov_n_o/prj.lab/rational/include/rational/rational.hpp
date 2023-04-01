@@ -44,8 +44,8 @@ public:
     int32_t Nod(int32_t lhs, int32_t rhs);
     void Reduce();
     
-    int32_t & GetNum() { return num; }
-    int32_t & GetDen() { return den; }
+    const int32_t & GetNum() const noexcept { return num; }
+    const int32_t & GetDen() const noexcept { return den; }
 
 private:
     int32_t num{0};
