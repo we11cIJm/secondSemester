@@ -2,158 +2,134 @@
 #include <doctest/doctest.h>
 #include <arrayd/arrayd.hpp>
 
-TEST_CASE("basic operations") {
-    ArrayD a(3);
-    for(int i = 0; i < a.ssize(); ++i) {
-        a[i] = (double)i + 0.5;
+TEST_CASE("ArrayD constructor") {
+    SUBCASE("Default constructor creates an empty array") {
+        ArrayD arr;
+        REQUIRE(arr.ssize() == 0);
     }
-    // for(int i = 0; i < 3; ++i) {
-    //     CHECK(a[i] == (double)i + 0.5);
-    // }
-    // CHECK(a[1] == 1.5);
-    double num = 1.4;
-    CHECK_THROWS(a[5] = num);
-    CHECK_THROWS(a[-1] = 1.5);
+
+    SUBCASE("Constructor creates an array of a given size") {
+        ArrayD arr(5);
+        REQUIRE(arr.ssize() == 5);
+        for (std::ptrdiff_t i = 0; i < arr.ssize(); ++i) {
+            REQUIRE(arr[i] == doctest::Approx(0.0));
+        }
+    }
+
+    SUBCASE("Constructor throws an exception if size is negative") {
+        REQUIRE_THROWS_AS(ArrayD(-1), std::invalid_argument);
+    }
 }
 
-TEST_CASE("resize") {
-    ArrayD resize_arr(3);
-    for (int i = 0; i < resize_arr.ssize(); ++i) {
-        resize_arr[i] = i;
+TEST_CASE("ArrayD destructor") {
+    SUBCASE("Destructor frees the memory") {
+        ArrayD* arr = new ArrayD(10);
+        delete arr;
     }
-    double *p1 = &resize_arr[0];
-    resize_arr.resize(5);
-    resize_arr[3] = 5;
-    double *p2 = &resize_arr[3];
-    std::cout << p1 << "\t" << p2 << '\n';
-    std::cout << resize_arr[4] << '\n';
 }
 
-TEST_CASE("insert") {
-    ArrayD insert_arr(4); // { 5, 6, 7, 8 }
-    for (int i = 0; i < insert_arr.ssize(); ++i) {
-        insert_arr[i] = i + 5;
+TEST_CASE("ArrayD copy constructor") {
+    SUBCASE("Copy constructor creates a new array with the same elements") {
+        ArrayD arr1(3);
+        arr1[0] = 1.0;
+        arr1[1] = 2.0;
+        arr1[2] = 3.0;
+
+        ArrayD arr2(arr1);
+        REQUIRE(arr2.ssize() == 3);
+        for (std::ptrdiff_t i = 0; i < arr2.ssize(); ++i) {
+            REQUIRE(arr2[i] == doctest::Approx(arr1[i]));
+        }
     }
-    for (int i = 0; i < insert_arr.ssize(); ++i) {
-        std::cout << insert_arr[i] << ' ';
+}
+
+TEST_CASE("ArrayD assignment operator") {
+    SUBCASE("Assignment operator copies the elements") {
+        ArrayD arr1(3);
+        arr1[0] = 1.0;
+        arr1[1] = 2.0;
+        arr1[2] = 3.0;
+
+        ArrayD arr2;
+        arr2 = arr1;
+        REQUIRE(arr2.ssize() == 3);
+        for (std::ptrdiff_t i = 0; i < arr2.ssize(); ++i) {
+            REQUIRE(arr2[i] == doctest::Approx(arr1[i]));
+        }
+    }
+
+    SUBCASE("Assignment operator handles self-assignment") {
+        ArrayD arr(3);
+        arr[0] = 1.0;
+        arr[1] = 2.0;
+        arr[2] = 3.0;
+
+        arr = arr;
+        REQUIRE(arr.ssize() == 3);
+        REQUIRE(arr[0] == doctest::Approx(1.0));
+        REQUIRE(arr[1] == doctest::Approx(2.0));
+        REQUIRE(arr[2] == doctest::Approx(3.0));
+    }
+}
+
+TEST_CASE("ArrayD element access") {
+    SUBCASE("operator[] returns a reference to the element") {
+        ArrayD arr(3);
+        arr[0] = 1.0;
+        arr[1] = 2.0;
+        arr[2] = 3.0;
+
+        REQUIRE(&arr[0] != nullptr);
+        REQUIRE(&arr[1] != nullptr);
+        REQUIRE(&arr[2] != nullptr);
+    }
+
+    SUBCASE("operator[] throws an exception if the index is out of range") {
+        ArrayD arr(3);
+        double tmp = 0.0;
+        REQUIRE_THROWS_AS(tmp = arr[-1], std::out_of_range);
+        REQUIRE_THROWS_AS(tmp = arr[3], std::out_of_range);
+    }
+
+    SUBCASE("ArrayD subscript operator throws an exception when the index is out of range") {
+        ArrayD arr(3);
+        double tmp = 0.0;
+        REQUIRE_THROWS_AS(tmp = arr[-1], std::out_of_range&);
+        REQUIRE_THROWS_AS(tmp = arr[3], std::out_of_range&);
+    }
+
+    SUBCASE("ArrayD const subscript operator throws an exception when the index is out of range") {
+        ArrayD arr(3);
+        double tmp = 0.0;
+        const ArrayD& const_arr = arr;
+        REQUIRE_THROWS_AS(tmp = const_arr[-1], std::out_of_range&);
+        REQUIRE_THROWS_AS(tmp = const_arr[3], std::out_of_range&);
+    }    
+}
+
+TEST_CASE("ArrayD resize method throws an exception when the new size is less than or equal to 0") {
+    ArrayD arr(3);
+    CHECK_THROWS_AS(arr.resize(0), std::invalid_argument);
+    CHECK_THROWS_AS(arr.resize(-3), std::invalid_argument);
+}
+
+/* my own tests */
+
+TEST_CASE("push_back") {
+    ArrayD arr(3);
+    for (int i = 0; i < arr.ssize(); ++i) {
+        arr[i] = i + 0.5;
+    }
+    for (int i = 0; i < arr.ssize(); ++i) {
+        std::cout << arr[i] << ' ';
     }
     std::cout << std::endl;
-    insert_arr.insert(2, 2);
-    for (int i = 0; i < insert_arr.ssize(); ++i) {
-        std::cout << insert_arr[i] << ' ';
+    std::cout << arr.ssize() << '\n';
+    arr.push_back(1.6);
+    std::cout << arr.ssize() << '\n';
+    for (int i = 0; i < arr.ssize(); ++i) {
+        std::cout << arr[i] << ' ';
+        // std::cout << i << ' ';
     }
     std::cout << std::endl;
 }
-
-TEST_CASE("remove") {
-    ArrayD remove_arr(4); // { 5, 6, 7, 8 }
-    for (int i = 0; i < remove_arr.ssize(); ++i) {
-        remove_arr[i] = i + 5;
-    }
-    for (int i = 0; i < remove_arr.ssize(); ++i) {
-        std::cout << remove_arr[i] << ' ';
-    }
-    std::cout << std::endl;
-    remove_arr.remove(2);
-    for (int i = 0; i < remove_arr.ssize(); ++i) {
-        std::cout << remove_arr[i] << ' ';
-    }
-    std::cout << std::endl;
-}
-
-
-// TEST_CASE("push_back") {
-//     ArrayD arr(3);
-//     for (int i = 0; i < arr.ssize(); ++i) {
-//         arr[i] = i + 0.5;
-//     }
-//     for (int i = 0; i < arr.ssize(); ++i) {
-//         std::cout << arr[i] << ' ';
-//     }
-//     std::cout << std::endl;
-//     std::cout << arr.ssize() << '\n';
-//     arr.push_back(1.6);
-//     std::cout << arr.ssize() << '\n';
-//     for (int i = 0; i < arr.ssize(); ++i) {
-//         std::cout << arr[i] << ' ';
-//         // std::cout << i << ' ';
-//     }
-//     std::cout << std::endl;
-// }
-
-
-/* ТЕСТЫ КИРИЛЛА */
-
-/*
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-
-#include<arrayd/arrayd.hpp>
-
-#include <doctest/doctest.h>
-
-#include<iostream>
-
-const double EPS = std::numeric_limits<double>::epsilon();
-
-TEST_CASE("checking constuct") {
-    ArrayD a(3);
-    CHECK(a[1] == 0);
-
-    ArrayD b(3, 1);
-    ArrayD c(b);
-
-    CHECK_THROWS(ArrayD(-1));
-
-    for (ptrdiff_t i = 0; i < 3; i += 1) {
-        CHECK(a[i] == b[i]-1);
-    }
-
-    for (ptrdiff_t i = 0; i < 3; i += 1) {
-        CHECK(b[i] == c[i]);
-    }
-
-    a = b;
-    for (ptrdiff_t i = 0; i < 3; i += 1) {
-        CHECK(a[i] == c[i]);
-    }
-    
-}
-
-TEST_CASE("checking methods") {
-    ArrayD a(5, 0);
-    a[1] = 1;
-    a[2] = 2;
-    a[3] = 3;
-    a[4] = 4;
-    CHECK(a[0] - 0 <= EPS);
-    CHECK(a[1] - 1 <= EPS);
-    CHECK(a[2] - 2 <= EPS);
-    CHECK(a[3] - 3 <= EPS);
-    CHECK(a[4] - 4 <= EPS);
-
-    CHECK(a.ssize() == 5);
-
-    a.resize(7);
-    // CHECK(a[5] - 0 <= EPS);
-    // CHECK(a[6] - 0 <= EPS);
-    CHECK(a.ssize() == 7);
-
-    a.insert(1, 3);
-    // CHECK(a[3] - 1 <= EPS);
-    CHECK(a[4] - 3 <= EPS);
-    CHECK(a.ssize() == 8);
-
-    a.remove(3);
-    CHECK(a[3] - 3 <= EPS);
-    CHECK(a.ssize() == 7);
-
-    // a.push_back(10);
-    // CHECK(a[6] - 10 <= EPS);
-
-    // a.pop_back();
-    // CHECK_THROWS(a[7]);
-    // CHECK_THROWS(a[15]);
-    // CHECK_THROWS(a[-1]);
-   
-}
-*/
