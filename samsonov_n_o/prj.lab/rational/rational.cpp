@@ -61,25 +61,11 @@ void Rational::Reduce()
     den /= r;
 }
 
-// int32_t Rational::ToInt() {
-//     // if(den == 1) {
-//     //     int32_t Int = num;
-//     //     (*this) = Int;
-//     // }
-//     // return *this;
-//     // return static_cast<double>(*this);
-//     if(den == 1) {
-//         double tmp = 
-//     }
-// }
-
 Rational Rational::operator-() {
 	Rational newR(*this);
 	newR.num = -num;
 	return newR;
 }
-
-
 
 Rational& Rational::operator+=(const Rational& rhs)
 {
@@ -370,14 +356,6 @@ Rational Rational::operator--(int)
 
 std::ostream& Rational::WriteTo(std::ostream& ostrm) const
 {
-    // if(den < 0) {
-    //     // ToInt();
-    //     ostrm << -num << separator << -den;
-    // }
-    // else {
-    //     // ToInt();
-    //     ostrm << num << separator << den;
-    // }
     ostrm << num << separator << den;
     return ostrm;
 }
@@ -386,10 +364,10 @@ std::istream& Rational::ReadFrom(std::istream& istrm)
 {
     int32_t numInp(0);
     char sep{'/'};
-    // char enter{'\t'};
     int32_t denInp(1);
     try {
         istrm >> numInp >> sep >> denInp;
+        std::cout << "numInp = " << numInp << ", sep = " << sep << ", denInp = " << denInp << std::endl;
         if(istrm.good())
         {
             if(sep == separator) //  && sep != enter
@@ -398,19 +376,15 @@ std::istream& Rational::ReadFrom(std::istream& istrm)
                 {
                     throw std::invalid_argument("expected positive denominator");
                 }
-                // if(denInp < 0) {
-                //     istrm.setstate(std::ios_base::badbit);
-                //     return istrm;
-                // }
                 num = numInp;
                 den = denInp;
                 Reduce();
-                // ToInt();
+                std::cout << "num = " << num << ", den = " << den << std::endl;
             } else {
                 throw std::invalid_argument("Incorrect input");
             }
         } else {
-            istrm.setstate(std::ios_base::failbit);
+            istrm.setstate(std::ios_base::badbit);
         }
     } catch (const std::exception& ex) {
         std::cerr << ex.what() << '\n';
@@ -420,3 +394,131 @@ std::istream& Rational::ReadFrom(std::istream& istrm)
     return istrm;
 }
 
+
+/* mine */
+// std::istream& Rational::ReadFrom(std::istream& istrm)
+// {
+//     int32_t numInp(0);
+//     char sep{'/'};
+//     int32_t denInp(1);
+//     try {
+//         istrm >> numInp >> sep >> denInp;
+//         if(istrm.good())
+//         {
+//             if(sep == separator) //  && sep != enter
+//             {
+//                 if(denInp <= 0)
+//                 {
+//                     throw std::invalid_argument("expected positive denominator");
+//                 }
+//                 // if(denInp < 0) {
+//                 //     istrm.setstate(std::ios_base::badbit);
+//                 //     return istrm;
+//                 // }
+//                 num = numInp;
+//                 den = denInp;
+//                 Reduce();
+//                 // ToInt();
+//             } else {
+//                 throw std::invalid_argument("Incorrect input");
+//             }
+//         } else {
+//             istrm.setstate(std::ios_base::badbit);
+//         }
+//     } catch (const std::exception& ex) {
+//         std::cerr << ex.what() << '\n';
+//     } catch (...) {
+//         std::cerr << "smth went wrong\n";
+//     }
+//     return istrm;
+// }
+
+// std::istream& Rational::ReadFrom(std::istream& istrm)
+// {
+//     int32_t numInp(0);
+//     char sep{'/'};
+//     int32_t denInp(1);
+//     try {
+//         istrm >> numInp >> sep >> denInp;
+//         if (istrm.good() && sep == separator && denInp > 0) {
+//             num = numInp;
+//             den = denInp;
+//             Reduce();
+//         } else {
+//             istrm.clear();
+//             istrm.setstate(std::ios_base::badbit);
+//         }
+//     } catch (...) {
+//         istrm.clear();
+//         istrm.setstate(std::ios_base::badbit);
+//     }
+//     return istrm;
+// }
+
+// std::istream& Rational::ReadFrom(std::istream& istrm)
+// {
+//     int32_t numerator;
+//     int32_t denominator;
+//     char separator;
+
+//     istrm >> numerator >> separator >> denominator;
+
+//     if (istrm.good() && separator == '/') {
+//         num = numerator;
+//         den = denominator;
+//         Reduce();
+//     } else {
+//         // Set failbit if input is invalid
+//         istrm.setstate(std::ios_base::failbit);
+//     }
+
+//     return istrm;
+// }
+
+/*std::istream& Rational::ReadFrom(std::istream& istrm) {
+    int32_t numInp(0);
+    char sep{'/'};
+    int32_t denInp(1);
+    try {
+        istrm >> numInp >> sep >> denInp;
+        if (istrm.good()) {
+            if (sep == separator) {
+                if (denInp <= 0) {
+                    istrm.setstate(std::ios_base::failbit);
+                    return istrm;
+                }
+                num = numInp;
+                den = denInp;
+                Reduce();
+            } else {
+                istrm.setstate(std::ios_base::failbit);
+                return istrm;
+            }
+        } else {
+            istrm.setstate(std::ios_base::failbit);
+            return istrm;
+        }
+    } catch (...) {
+        istrm.setstate(std::ios_base::failbit);
+        return istrm;
+    }
+    return istrm;
+}*/
+
+/*std::istream& Rational::ReadFrom(std::istream& istrm) {
+    int numerator = 0;
+    int denominator = 0;
+    char slash = '/';
+
+    istrm >> numerator >> slash >> denominator;
+    
+    if (istrm.good() && slash == '/') {
+        Rational newRational(numerator, denominator);
+        istrm.clear();
+        istrm.ignore(10000, '\n');
+        return istrm;
+    } else {
+        istrm.setstate(std::ios::failbit);
+        return istrm;
+    }
+}*/
