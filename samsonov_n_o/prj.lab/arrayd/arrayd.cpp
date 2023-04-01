@@ -9,11 +9,34 @@
 //     return rhs.ReadFrom(istrm);
 // }
 
-ArrayD::ArrayD(const std::ptrdiff_t size) 
+ArrayD::ArrayD()
+    :
+    ssize_(0),
+    realSize_(0),
+    data_(nullptr) {
+}
+
+
+/*
     :
     ssize_(size),
     realSize_(ssize_ * 2),
-    data_(new double[realSize_]) {
+    data_(new double[realSize_]) 
+*/
+ArrayD::ArrayD(const std::ptrdiff_t size) {
+    if (size < 0) {
+        throw std::invalid_argument("size is negative");
+    } else if (size > 0) {
+        ssize_ = size;
+        realSize_ = ssize_ * 2;
+        data_ = new double[realSize_];
+        for(int i = 0; i < ssize_; ++i) {
+            data_[i] = 0;
+        }
+    } else {
+        std::cerr << "size cannot be null" << std::endl;
+    }
+
 }
 ArrayD::ArrayD(const ArrayD& arrInp)
     :
@@ -65,12 +88,15 @@ std::ptrdiff_t ArrayD::ssize() const noexcept {
 
 void ArrayD::resize(const std::ptrdiff_t newSize) {
     // double *pNewData = data_ + ssize_;
+    if (newSize <= 0) {
+        throw std::invalid_argument("size cannot be negative or null");
+    }
     if (newSize > realSize_) {
         // pNewData = new double[newSize - ssize_];
         // pNewData = data_;
         realSize_ = newSize * 2;
         double *pNewData = new double[realSize_];
-        for (int i = 0; i < newSize; ++i) {
+        for (ptrdiff_t i = 0; i < newSize; ++i) {
             pNewData[i] = data_[i];
         }
         delete [] data_;
