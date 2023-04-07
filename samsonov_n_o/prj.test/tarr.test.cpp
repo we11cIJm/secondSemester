@@ -2,7 +2,7 @@
 #include <doctest/doctest.h>
 #include <arrayt/arrayt.hpp>
 
-/*TEST_CASE("basic operations") {
+TEST_CASE("basic operations") {
     SUBCASE("initialize with size") {
         ArrayT<int> arr(10);
         ArrayT<int> a(3);
@@ -55,7 +55,7 @@
         CHECK_THROWS(a[-1] == 0);
         CHECK_THROWS(a[3] == 0);
     }
-}*/
+}
 
 // Kirills' tests
 
@@ -100,15 +100,8 @@ TEST_CASE("checking methods") {
     CHECK(a.ssize() == 5);
 
     a.resize(7);
-/*
-/home/kolya/Desktop/code/secondSemester/samsonov_n_o/prj.test/tarr.test.cpp:103: ERROR: CHECK( std::abs(a[5] - 0) <= EPS ) is NOT correct!
-  values: CHECK( 3.09293e+262 <= 2.22045e-16 )
-
-/home/kolya/Desktop/code/secondSemester/samsonov_n_o/prj.test/tarr.test.cpp:104: ERROR: CHECK( std::abs(a[6] - 0) <= EPS ) is NOT correct!
-  values: CHECK( 5.78091e+204 <= 2.22045e-16 )
-*/
-    // CHECK(std::abs(a[5] - 0) <= EPS);
-    // CHECK(std::abs(a[6] - 0) <= EPS);
+    CHECK(std::abs(a[5] - 0) <= EPS);
+    CHECK(std::abs(a[6] - 0) <= EPS);
     CHECK(a.ssize() == 7);
 
     a.insert(3, 1);
@@ -119,23 +112,6 @@ TEST_CASE("checking methods") {
     a.remove(3);
     CHECK(std::abs(a[3] - 3) <= EPS);
     CHECK(a.ssize() == 7);
-
-    // a.push_back(10);
-    // CHECK(std::abs(a[7] - 10) <= EPS);
-
-    // a.insert(8, 11);
-    // CHECK(a[8] - 11 <= EPS);
-    // a.pop_back();
-    // a.pop_back();
-
-    // CHECK_THROWS(a[7]);
-    // CHECK_THROWS(a[15]);
-    // CHECK_THROWS(a[-1]);
-    // CHECK_THROWS(a.resize(0));
-    // CHECK_THROWS(a.insert(8, 2));
-    // CHECK_THROWS(a.insert(-1, 2));
-    // CHECK_THROWS(a.remove(-1));
-    // CHECK_THROWS(a.remove(7));
 
     ArrayT<double> h(0);
     CHECK_THROWS(h.remove(0));

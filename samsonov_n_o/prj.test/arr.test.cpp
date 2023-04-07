@@ -2,7 +2,7 @@
 #include <doctest/doctest.h>
 #include <arrayd/arrayd.hpp>
 
-/*TEST_CASE("ArrayD constructor") {
+TEST_CASE("ArrayD constructor") {
     SUBCASE("Default constructor creates an empty array") {
         ArrayD arr;
         REQUIRE(arr.ssize() == 0);
@@ -34,7 +34,6 @@ TEST_CASE("ArrayD copy constructor") {
         arr1[0] = 1.0;
         arr1[1] = 2.0;
         arr1[2] = 3.0;
-
         ArrayD arr2(arr1);
         REQUIRE(arr2.ssize() == 3);
         for (std::ptrdiff_t i = 0; i < arr2.ssize(); ++i) {
@@ -111,7 +110,7 @@ TEST_CASE("ArrayD resize method throws an exception when the new size is less th
     ArrayD arr(3);
     CHECK_THROWS_AS(arr.resize(0), std::invalid_argument);
     CHECK_THROWS_AS(arr.resize(-3), std::invalid_argument);
-}*/
+}
 
 // Kirills' tests
 
@@ -144,6 +143,7 @@ TEST_CASE("checking constuct") {
 
 TEST_CASE("checking methods") {
     ArrayD a(5, 0);
+
     a[1] = 1.0;
     a[2] = 2.0;
     a[3] = 3.0;
@@ -153,19 +153,11 @@ TEST_CASE("checking methods") {
     CHECK(std::abs(a[2] - 2) <= EPS);
     CHECK(std::abs(a[3] - 3) <= EPS);
     CHECK(std::abs(a[4] - 4) <= EPS);
-
     CHECK(a.ssize() == 5);
 
     a.resize(7);
-/*
-/home/kolya/Desktop/code/secondSemester/samsonov_n_o/prj.test/arr.test.cpp:160: ERROR: CHECK( std::abs(a[5] - 0) <= EPS ) is NOT correct!
-  values: CHECK( 3.09293e+262 <= 2.22045e-16 )
-
-/home/kolya/Desktop/code/secondSemester/samsonov_n_o/prj.test/arr.test.cpp:161: ERROR: CHECK( std::abs(a[6] - 0) <= EPS ) is NOT correct!
-  values: CHECK( 5.78091e+204 <= 2.22045e-16 )
-*/
-    // CHECK(std::abs(a[5] - 0) <= EPS);
-    // CHECK(std::abs(a[6] - 0) <= EPS);
+    CHECK(std::abs(a[5] - 0) <= EPS);
+    CHECK(std::abs(a[6] - 0) <= EPS);
     CHECK(a.ssize() == 7);
 
     a.insert(3, 1);
@@ -177,24 +169,6 @@ TEST_CASE("checking methods") {
     CHECK(std::abs(a[3] - 3) <= EPS);
     CHECK(a.ssize() == 7);
 
-    // a.push_back(10);
-    // CHECK(std::abs(a[7] - 10) <= EPS);
-    
-    // a.insert(8, 11);
-    // CHECK(a[8] - 11 <= EPS);
-    // a.pop_back();
-    // a.pop_back();
-    
-    // CHECK_THROWS(a[7]);
-    // CHECK_THROWS(a[15]);
-    // CHECK_THROWS(a[-1]);
-    // CHECK_THROWS(a.resize(0));
-    // CHECK_THROWS(a.insert(8, 2));
-    // CHECK_THROWS(a.insert(-1, 2));
-    // CHECK_THROWS(a.remove(-1));
-    // CHECK_THROWS(a.remove(7));
-
     ArrayD h(0);
-    CHECK_THROWS(h.remove(0));
-   
+    CHECK_THROWS(h.remove(0));  
 }

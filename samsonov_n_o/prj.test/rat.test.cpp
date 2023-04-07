@@ -3,7 +3,6 @@
 #include <sstream>
 #include <rational/rational.hpp>
 
-/*
 TEST_CASE("[rational] - Rational ctor")
 {
     CHECK(Rational() == Rational(0, 1));
@@ -142,7 +141,6 @@ TEST_CASE("compound assignment")
     CHECK(Rational(1, 6) == (Rational(1, 2) *= Rational(1, 3)));
     CHECK(Rational(3, 2) == (Rational(1, 2) /= Rational(1, 3)));
 }
-*/
 
 // TEST_CASE("i/o test") {
 //     Rational test1;
