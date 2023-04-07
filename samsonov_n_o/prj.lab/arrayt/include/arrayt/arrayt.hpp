@@ -15,7 +15,7 @@ public:
 
     ArrayT(const std::ptrdiff_t size, const T& rvalue); // no realization fot this method
 
-    ~ArrayT() { delete [] data_; }
+    ~ArrayT() { delete[] data_; }
 
     ArrayT& operator=(const ArrayT& rhs);
     // double& at(const std::ptrdiff_t newIndex);
@@ -53,7 +53,7 @@ ArrayT<T>::ArrayT(const std::ptrdiff_t size) {
     } else {
         ssize_ = size;
         realSize_ = ssize_ * 2;
-        data_ = new T[realSize_];
+        data_ = new T[realSize_]{};
         for (ptrdiff_t i = 0; i < ssize_; ++i) {
             data_[i] = 0;
         }
@@ -63,8 +63,8 @@ ArrayT<T>::ArrayT(const std::ptrdiff_t size) {
 template<typename T>
 ArrayT<T>::ArrayT(const ArrayT& arrInp)
     : ssize_(arrInp.ssize_),
-    realSize_(arrInp.ssize_ * 2),
-    data_(new T[realSize_]) {
+    realSize_(arrInp.ssize_ * 2) {
+        data_ = new T[realSize_]{};
         for(ptrdiff_t i = 0; i < arrInp.ssize_; ++i) {
             data_[i] = arrInp.data_[i];
         }
@@ -74,8 +74,8 @@ template<typename T>
 ArrayT<T>::ArrayT(const std::ptrdiff_t size, const T& rvalue)
     :
     ssize_(size),
-    realSize_(ssize_ * 2),
-    data_(new T[realSize_]) {
+    realSize_(ssize_ * 2) {
+        data_ = new T[realSize_]{};
         for (int i = 0; i < ssize_; ++i) {
             data_[i] = rvalue;
         }
@@ -123,7 +123,7 @@ void ArrayT<T>::resize(const std::ptrdiff_t newSize) {
     }
     if (newSize > realSize_) {
         realSize_ = newSize * 2;
-        T *pNewData = new T[realSize_];
+        T *pNewData = new T[realSize_]{};
         for (ptrdiff_t i = 0; i < this->ssize_; ++i) {
             pNewData[i] = data_[i];
         }
