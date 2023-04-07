@@ -2,27 +2,12 @@
 #include <sstream>
 #include <arrayd/arrayd.hpp>
 
-// std::ostream& operator<<(std::ostream ostrm, const ArrayD& rhs) {
-//     return rhs.WriteTo(ostrm);
-// }
-// std::istream& operator>>(std::istream istrm, const ArrayD& rhs) {
-//     return rhs.ReadFrom(istrm);
-// }
-
 ArrayD::ArrayD()
     :
     ssize_(0),
     realSize_(0),
     data_(nullptr) {
 }
-
-
-/*
-    :
-    ssize_(size),
-    realSize_(ssize_ * 2),
-    data_(new double[realSize_]) 
-*/
 ArrayD::ArrayD(const std::ptrdiff_t size) {
     if (size < 0) {
         throw std::invalid_argument("size is negative");
@@ -30,18 +15,20 @@ ArrayD::ArrayD(const std::ptrdiff_t size) {
         ssize_ = size;
         realSize_ = ssize_ * 2;
         data_ = new double[realSize_];
-        for(int i = 0; i < ssize_; ++i) {
+        for(int i = 0; i < realSize_; ++i) { // or i < ssize_ ? (i did this because other data can be filled by trash)
             data_[i] = 0;
         }
     } else {
-        std::cerr << "size cannot be null" << std::endl;
+        ssize_ = 0;
+        realSize_ = 0;
+        data_ = nullptr;
     }
 
 }
 ArrayD::ArrayD(const ArrayD& arrInp)
     :
     ssize_(arrInp.ssize_), 
-    realSize_(arrInp.realSize_),
+    realSize_(arrInp.ssize_ * 2),
     data_(new double[realSize_]) {
         for(int i = 0; i < ssize_; ++i) {
             data_[i] = arrInp.data_[i];
@@ -60,9 +47,9 @@ ArrayD& ArrayD::operator=(const ArrayD& rhs) {
     if(this != &rhs) { /* a != a : checking that it isn't the same object */
         delete [] data_;
         ssize_ = rhs.ssize_;
-        realSize_ = ssize_ * 2;
+        realSize_ = rhs.ssize_ * 2;
         data_ = new double[realSize_];
-        for(int i = 0; i < ssize_; ++i) {
+        for(int i = 0; i < rhs.ssize_; ++i) {
             data_[i] = rhs.data_[i];
         }
     }
@@ -92,12 +79,13 @@ void ArrayD::resize(const std::ptrdiff_t newSize) {
         throw std::invalid_argument("size cannot be negative or null");
     }
     if (newSize > realSize_) {
-        // pNewData = new double[newSize - ssize_];
-        // pNewData = data_;
         realSize_ = newSize * 2;
         double *pNewData = new double[realSize_];
-        for (ptrdiff_t i = 0; i < newSize; ++i) {
+        for (ptrdiff_t i = 0; i < this->ssize_; ++i) {
             pNewData[i] = data_[i];
+        }
+        for (ptrdiff_t i = this->ssize_; i < newSize; ++i) {
+            pNewData[i] = 0;
         }
         delete [] data_;
         data_ = pNewData;
@@ -106,6 +94,9 @@ void ArrayD::resize(const std::ptrdiff_t newSize) {
 }
 
 void ArrayD::insert(const std::ptrdiff_t index, const double& value) {
+    if (index >= ssize_ || index < 0) {
+        throw std::invalid_argument("out of range");
+    }
     if (ssize_ + 1 <= realSize_) {
         ssize_ += 1;
     } else {
@@ -119,18 +110,17 @@ void ArrayD::insert(const std::ptrdiff_t index, const double& value) {
 }
 
 void ArrayD::remove(const std::ptrdiff_t index) {
-    if (index >= 0 && index < ssize_) {
-        for (ptrdiff_t i = index; i < ssize_ - 1; ++i) {
-            data_[i] = data_[i+1];
-        }
-        ssize_ -= 1;
-    } else {
-        throw std::out_of_range("index out of range");
+    if (index >= ssize_ || index < 0) {
+        throw std::invalid_argument("out of range");
     }
+    for (ptrdiff_t i = index; i < ssize_; ++i) {
+        data_[i] = data_[i+1];
+    }
+    ssize_ -= 1;
 }
 
-void ArrayD::push_back(const double& lvalue) noexcept {
-    ssize_ += 1;
-    data_[ssize_ - 1] = lvalue;
-}
+// void ArrayD::push_back(const double& lvalue) noexcept {
+//     ssize_ += 1;
+//     data_[ssize_ - 1] = lvalue;
+// }
 

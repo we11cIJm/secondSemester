@@ -27,15 +27,12 @@ public:
     // void inc_for_size() {
     //     this->resize(ssize_ + 1);
     // }
-    void push_back(const double& lvalue) noexcept;
+    // void push_back(const double& lvalue) noexcept;
 
 private:
     std::ptrdiff_t ssize_{0};
     std::ptrdiff_t realSize_{0};
     double* data_{nullptr};
 };
-
-// std::ostream& operator<<(std::ostream ostrm, const ArrayD& rhs);
-// std::istream& operator>>(std::ostream ostrm, const ArrayD& rhs);
 
 #endif
