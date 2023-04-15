@@ -3,37 +3,38 @@
 
 #include <iostream>
 #include <cstdint>
+#include <cstddef>
+#include <tuple>
 
 class MatrixS {
 public:
-    // MatrixS() = default;
-    // MatrixS(const size_t size = {0, 0});
-    // MatrixS(const MatrixS& t); //
-    // MatrixS& operator=(const MatrixS& rhs);
+    using SizeType = std::tuple<std::ptrdiff_t, std::ptrdiff_t>;
 
-    /**
-     * \brief возвращает элемент матрицы под индексами {i, j}
-     * \throw std::out_of_range если хотябы один индекс вне диапазона [0, dsize)
-     * \param[in] elem индексы элемента
-     * \return элемент матрицы
-     */
-//    [[nodiscard]] int& at(const size_type elem);
-//    [[nodiscard]] int at(const size_type elem) const;
+public:   
+    explicit MatrixS(const SizeType& size = {0, 0});
+    MatrixS(const std::ptrdiff_t m, const std::ptrdiff_t n);
+    ~MatrixS();
 
-    /**
-     * \return текущий размер матрицы {m, n}
-     */
-//    [[nodiscard]] size_type ssize() const noexcept;
+    MatrixS(const MatrixS& other);
+    MatrixS& operator=(const MatrixS& other);
 
-    /**
-     * \brief Изменение размера матрицы
-     * \param[in] new_size новый размер матрицы {m, n}
-     * \throw std::invalid_argument если new m <= 0 или new n <= 0
-     */
-    // void resize(const size_t new_size);
+    [[nodiscard]] int& at(const SizeType& elem);
+    [[nodiscard]] const int& at(const SizeType& elem) const;
+    [[nodiscard]] int& at(const std::ptrdiff_t i, const std::ptrdiff_t j);
+    [[nodiscard]] const int& at(const std::ptrdiff_t i, const std::ptrdiff_t j) const;
+ 
+    void resize(const SizeType& new_size);
+    void resize(const std::ptrdiff_t i, const std::ptrdiff_t j);
+
+    [[nodiscard]] const SizeType& ssize() const noexcept;
+
+    [[nodiscard]] std::ptrdiff_t nRows() const noexcept;
+
+    [[nodiscard]] std::ptrdiff_t nCols() const noexcept;
 
 private:
-    // using size_type = std::pair<std::ptrdiff_t row, std::ptrdiff_t column> MatrixS;
+    int* data_{0};
+    std::ptrdiff_t rows_{0};
+    std::ptrdiff_t cols_{0};
 };
-
 #endif
