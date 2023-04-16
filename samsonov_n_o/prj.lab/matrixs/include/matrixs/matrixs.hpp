@@ -10,8 +10,13 @@ class MatrixS {
 public:
     using SizeType = std::tuple<std::ptrdiff_t, std::ptrdiff_t>;
 
-public:   
-    explicit MatrixS(const SizeType& size = {0, 0});
+public:
+    MatrixS();
+    explicit MatrixS(const SizeType& size);
+
+    //explicit MatrixS(std::initializer_list<std::size_t> size)
+    //: MatrixS(std::make_tuple(*(size.begin()), *(size.begin() + 1))) {}
+    
     MatrixS(const std::ptrdiff_t m, const std::ptrdiff_t n);
     ~MatrixS();
 
@@ -36,5 +41,6 @@ private:
     int* data_{0};
     std::ptrdiff_t rows_{0};
     std::ptrdiff_t cols_{0};
+    SizeType size_{std::make_tuple(rows_, cols_)};
 };
 #endif
