@@ -80,19 +80,22 @@ std::ptrdiff_t MatrixS::nCols() const noexcept {
 
 // method 'at' for writing a value with tuple
 int& MatrixS::at(const SizeType& elem) {
-    if (std::get<0>(elem) < 0 ||
-        std::get<1>(elem) < 0 ||
-        std::get<0>(elem) >= rows_ ||
-        std::get<1>(elem) >= cols_
+    int row = std::get<0>(elem);
+    int col = std::get<1>(elem);
+    if (row < 0 ||
+        col < 0 ||
+        row >= rows_ ||
+        col >= cols_
        ) {
         throw std::out_of_range("out of range");
     }
-    return *(data_ + std::get<0>(elem) * cols_ +  std::get<1>(elem));
+    return *(data_ + row * cols_ + col); 
 }
 
 // same as above for reading (and there's structured bindings, since C++17)
 const int& MatrixS::at(const SizeType& elem) const {
-    auto [row, col] = elem;
+    int row = std::get<0>(elem);
+    int col = std::get<1>(elem);
     if (row < 0 ||
         col < 0 ||
         row >= rows_ ||
@@ -129,7 +132,8 @@ const int& MatrixS::at(const std::ptrdiff_t row, const std::ptrdiff_t col) const
 
 // method 'resize' for changing a size of matrix with tuple
 void MatrixS::resize(const SizeType& new_size) {
-    auto [row, col] = new_size;
+    int row = std::get<0>(new_size);
+    int col = std::get<1>(new_size);
     if (row <= 0 || col <= 0) {
         throw std::invalid_argument("size cannot be negative or zero");
     }
