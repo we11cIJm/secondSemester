@@ -10,16 +10,16 @@ class Rational
 public:
     Rational();
     explicit Rational(const int32_t rhs);
-    Rational(Rational&&) = default;
     Rational(const int32_t lhs, const int32_t rhs);
     Rational(const Rational& rhs);
+    Rational(Rational&& rat);
 
     ~Rational() = default;
 
     static const char separator{'/'};
     
     Rational& operator=(const Rational& rhs);
-	Rational& operator=(Rational&&) = default;
+	Rational& operator=(Rational&& rhs);
     
     std::ostream& WriteTo(std::ostream& ostrm) const;
     std::istream& ReadFrom(std::istream& istrm);
@@ -44,12 +44,12 @@ public:
     int32_t Nod(int32_t lhs, int32_t rhs);
     void Reduce();
     
-    const int32_t & GetNum() const noexcept { return num; }
-    const int32_t & GetDen() const noexcept { return den; }
+    const int32_t & GetNum() const noexcept { return num_; }
+    const int32_t & GetDen() const noexcept { return den_; }
 
 private:
-    int32_t num{0};
-    int32_t den{1};
+    int32_t num_{0};
+    int32_t den_{1};
 
 };
 

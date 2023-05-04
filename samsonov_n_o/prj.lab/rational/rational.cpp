@@ -11,9 +11,9 @@ std::istream& operator>>(std::istream& istrm, Rational& rhs)
     return rhs.ReadFrom(istrm);
 }
 
-Rational::Rational() : num(0), den(1) {} /* default ctor */
-Rational::Rational(const int32_t rhs) : num(rhs), den(1) {} // int to rational
-Rational::Rational(const int32_t lhs, const int32_t rhs) // : num(lhs), den(rhs)
+Rational::Rational() : num_(0), den_(1) {} /* default ctor */
+Rational::Rational(const int32_t rhs) : num_(rhs), den_(1) {} // int to rational
+Rational::Rational(const int32_t lhs, const int32_t rhs) // : num_(lhs), den_(rhs)
 {
     if(rhs == 0) {
         throw std::overflow_error("division by zero");
@@ -24,22 +24,37 @@ Rational::Rational(const int32_t lhs, const int32_t rhs) // : num(lhs), den(rhs)
         // }
     }
     if(rhs < 0) {
-        num = -lhs;
-        den = -rhs;
+        num_ = -lhs;
+        den_ = -rhs;
         Reduce();
     }   
     else {
-        num = lhs;
-        den = rhs;
+        num_ = lhs;
+        den_ = rhs;
         Reduce();
     }
 }
-Rational::Rational(const Rational& rhs) : num(rhs.num), den(rhs.den) {} // copy constructor
+Rational::Rational(const Rational& rhs)
+    : num_(rhs.num_), den_(rhs.den_) // copy constructor
+{}
+
+Rational::Rational(Rational&& rat)
+    : num_(std::move(rat.num_))
+    , den_(std::move(rat.den_))
+{}
 
 Rational& Rational::operator=(const Rational& rhs) {
-	num = rhs.num;
-	den = rhs.den;
+	num_ = rhs.num_;
+	den_ = rhs.den_;
 	return *this;
+}
+
+Rational& Rational::operator=(Rational&& rhs) {
+    if (this != &rhs) {
+        num_ = std::move(rhs.num_);
+        den_ = std::move(rhs.den_);
+    }
+    return *this;
 }
 
 int32_t Rational::Nod(int32_t lhs, int32_t rhs) 
@@ -56,68 +71,68 @@ int32_t Rational::Nod(int32_t lhs, int32_t rhs)
 
 void Rational::Reduce()
 {
-    int32_t r = Nod(std::abs(num), den);
-    num /= r;
-    den /= r;
+    int32_t r = Nod(std::abs(num_), den_);
+    num_ /= r;
+    den_ /= r;
 }
 
 Rational Rational::operator-() {
 	Rational newR(*this);
-	newR.num = -num;
+	newR.num_ = -num_;
 	return newR;
 }
 
 Rational& Rational::operator+=(const Rational& rhs)
 {
-    num = rhs.den * num + rhs.num * den;
-    den *= rhs.den;
+    num_ = rhs.den_ * num_ + rhs.num_ * den_;
+    den_ *= rhs.den_;
     Reduce();
     return *this;
 }
 Rational& Rational::operator+=(const int32_t& rhs)
 {
     Rational tmp(rhs);
-    num = tmp.den * num + tmp.num * den;
-    den *= tmp.den;
+    num_ = tmp.den_ * num_ + tmp.num_ * den_;
+    den_ *= tmp.den_;
     Reduce();
     return *this;
 }
 Rational& Rational::operator-=(const Rational& rhs)
 {
-    num = rhs.den * num - rhs.num * den;
-    den *= rhs.den;
+    num_ = rhs.den_ * num_ - rhs.num_ * den_;
+    den_ *= rhs.den_;
     Reduce();
     return *this;
 }
 Rational& Rational::operator-=(const int32_t& rhs)
 {
     Rational tmp(rhs);
-    num = tmp.den * num - tmp.num * den;
-    den *= tmp.den;
+    num_ = tmp.den_ * num_ - tmp.num_ * den_;
+    den_ *= tmp.den_;
     Reduce();
     return *this;
 }
 Rational& Rational::operator*=(const Rational& rhs)
 {
-    num *= rhs.num;
-    den *= rhs.den;
+    num_ *= rhs.num_;
+    den_ *= rhs.den_;
     Reduce();
     return *this;
 }
 Rational& Rational::operator*=(const int32_t& rhs)
 {
-    num *= rhs;
+    num_ *= rhs;
     Reduce();
     return *this;
 }
 Rational& Rational::operator/=(const Rational& rhs)
 {
-    if(rhs.num == 0)
+    if(rhs.num_ == 0)
     {
         throw std::invalid_argument("division by zero");
     }
-    num *= rhs.den;
-    den *= rhs.num;
+    num_ *= rhs.den_;
+    den_ *= rhs.num_;
     Reduce();
     return *this;
 }
@@ -127,7 +142,7 @@ Rational& Rational::operator/=(const int32_t& rhs)
     {
         throw std::invalid_argument("division by zero");
     }
-    den *= rhs;
+    den_ *= rhs;
     Reduce();
     return *this;
 }
@@ -331,7 +346,7 @@ Rational operator/(const int32_t lhs, const Rational& rhs)
 
 Rational& Rational::operator++()
 {
-    num += den;
+    num_ += den_;
     Reduce();
     return *this;
 }
@@ -343,7 +358,7 @@ Rational Rational::operator++(int)
 }
 Rational& Rational::operator--()
 {
-    num -= den;
+    num_ -= den_;
     Reduce();
     return *this;
 }
@@ -356,7 +371,7 @@ Rational Rational::operator--(int)
 
 std::ostream& Rational::WriteTo(std::ostream& ostrm) const
 {
-    ostrm << num << separator << den;
+    ostrm << num_ << separator << den_;
     return ostrm;
 }
 
@@ -410,10 +425,10 @@ istrm.get() - func that getting next character
             istrm.setstate(std::ios_base::failbit);
             return istrm;
         }
-        num = numInp;
-        den = denInp;
+        num_ = numInp;
+        den_ = denInp;
         if (isNegative) {
-            num *= -1;
+            num_ *= -1;
         }
         Reduce();
     }
