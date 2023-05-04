@@ -13,15 +13,14 @@ public:
 public:
     MatrixS();
     explicit MatrixS(const SizeType& size);
-
-    //explicit MatrixS(std::initializer_list<std::size_t> size)
-    //: MatrixS(std::make_tuple(*(size.begin()), *(size.begin() + 1))) {}
     
     MatrixS(const std::ptrdiff_t m, const std::ptrdiff_t n);
     ~MatrixS();
 
     MatrixS(const MatrixS& other);
+    MatrixS(MatrixS&& other);
     MatrixS& operator=(const MatrixS& other);
+    MatrixS& operator=(MatrixS&& other);
 
     [[nodiscard]] int& at(const SizeType& elem);
     [[nodiscard]] const int& at(const SizeType& elem) const;

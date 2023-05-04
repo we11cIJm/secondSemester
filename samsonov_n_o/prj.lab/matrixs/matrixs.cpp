@@ -40,6 +40,17 @@ MatrixS::MatrixS(const MatrixS& other) {
     }
 }
 
+// move ctor
+MatrixS::MatrixS(MatrixS&& other) {
+    if (this != &other) {
+        rows_ = std::move(other.rows_);
+        cols_ = std::move(other.cols_);
+        size_ = std::move(other.size_);
+        delete[] data_;
+        data_ = std::move(other.data_);
+    }
+}
+
 // dctor
 MatrixS::~MatrixS() {
     delete[] data_;
@@ -57,6 +68,18 @@ MatrixS& MatrixS::operator=(const MatrixS& other) {
         rows_ = other.rows_;
         cols_ = other.cols_;
         std::copy(other.data_, other.data_ + rows_ * cols_, data_);
+    }
+    return *this;
+}
+
+// move assigment
+MatrixS& MatrixS::operator=(MatrixS&& other) {
+    if (this != & other) {
+        rows_ = std::move(other.rows_);
+        cols_ = std::move(other.cols_);
+        size_ = std::move(other.size_);
+        delete[] data_;
+        data_ = std::move(other.data_);
     }
     return *this;
 }
