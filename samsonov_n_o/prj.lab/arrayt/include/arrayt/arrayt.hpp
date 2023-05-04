@@ -12,6 +12,7 @@ public:
     ArrayT();
     explicit ArrayT(const std::ptrdiff_t size);
     ArrayT(const ArrayT& arrInp);
+    ArrayT(ArrayT&& arrInp);
 
     ArrayT(const std::ptrdiff_t size, const T& rvalue); // no realization fot this method
 
@@ -66,6 +67,13 @@ ArrayT<T>::ArrayT(const ArrayT& arrInp)
         data_[i] = arrInp.data_[i];
     }
 }
+
+template<typename T>
+ArrayT<T>::ArrayT(ArrayT&& arrInp)
+    : size_(std::move(arrInp.size_))
+    , capacity_(std::move(arrInp.capacity_))
+    , data_(std::move(arrInp.data_))
+{}
 
 template<typename T>
 ArrayT<T>::ArrayT(const std::ptrdiff_t size, const T& rvalue)
