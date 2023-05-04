@@ -5,7 +5,7 @@
 ArrayD::ArrayD()
     :
     ssize_(0),
-    realSize_(0),
+    capacity_(0),
     data_(nullptr)
 {}
 ArrayD::ArrayD(const std::ptrdiff_t size) {
@@ -13,45 +13,57 @@ ArrayD::ArrayD(const std::ptrdiff_t size) {
         throw std::invalid_argument("size is negative");
     } else if (size > 0) {
         ssize_ = size;
-        realSize_ = ssize_ * 2;
-        data_ = new double[realSize_]{};
+        capacity_ = ssize_ * 2;
+        data_ = new double[capacity_]{};
     } else {
         ssize_ = 0;
-        realSize_ = 0;
+        capacity_ = 0;
         data_ = nullptr;
     }
 
 }
 ArrayD::ArrayD(const ArrayD& arrInp)
-    :
-    ssize_(arrInp.ssize_), 
-    realSize_(arrInp.ssize_ * 2) {
-        data_ = new double[realSize_]{};
-        for(int i = 0; i < ssize_; ++i) {
-            data_[i] = arrInp.data_[i];
-        }
-}
-ArrayD::ArrayD(const std::ptrdiff_t size, const double& rvalue) {
-    ssize_ = size;
-    realSize_ = size * 2;
-    data_ = new double[realSize_]{};
-    for (int i = 0; i < ssize_; ++i) {
-        data_[i] = rvalue;
+    : ssize_(arrInp.ssize_)
+    , capacity_(arrInp.ssize_ * 2) {
+        data_ = new double[capacity_]{};
+    for(int i = 0; i < ssize_; ++i) {
+        data_[i] = arrInp.data_[i];
     }
 }
+ArrayD::ArrayD(ArrayD&& arrInp)
+    : ssize_(std::move(arrInp.ssize_))
+    , capacity_(std::move(arrInp.capacity_))
+    , data_(std::move(arrInp.data_))
+{}
 ArrayD& ArrayD::operator=(const ArrayD& rhs) {
     if(this != &rhs) { /* a != a : checking that it isn't the same object */
         delete [] data_;
         ssize_ = rhs.ssize_;
-        realSize_ = rhs.ssize_ * 2;
-        data_ = new double[realSize_]{};
+        capacity_ = rhs.ssize_ * 2;
+        data_ = new double[capacity_]{};
         for(int i = 0; i < rhs.ssize_; ++i) {
             data_[i] = rhs.data_[i];
         }
     }
     return *this;
 }
-
+ArrayD& ArrayD::operator=(ArrayD&& rhs) {
+    if (this != &rhs) {
+        ssize_ = std::move(rhs.ssize_);
+        capacity_ = std::move(rhs.capacity_);
+        delete[] data_;
+        data_ = std::move(rhs.data_);
+    }
+    return *this;
+}
+ArrayD::ArrayD(const std::ptrdiff_t size, const double& rvalue) {
+    ssize_ = size;
+    capacity_ = size * 2;
+    data_ = new double[capacity_]{};
+    for (int i = 0; i < ssize_; ++i) {
+        data_[i] = rvalue;
+    }
+}
 double& ArrayD::operator[](const std::ptrdiff_t index) { /* write method */
     if(index >= ssize_ || index < 0) {
         throw std::out_of_range("index out of range");
@@ -74,9 +86,9 @@ void ArrayD::resize(const std::ptrdiff_t newSize) {
     if (newSize <= 0) {
         throw std::invalid_argument("size cannot be negative or null");
     }
-    if (newSize > realSize_) {
-        realSize_ = newSize * 2;
-        double *pNewData = new double[realSize_]{};
+    if (newSize > capacity_) {
+        capacity_ = newSize * 2;
+        double *pNewData = new double[capacity_]{};
         for (ptrdiff_t i = 0; i < this->ssize_; ++i) {
             pNewData[i] = data_[i];
         }
@@ -93,7 +105,7 @@ void ArrayD::insert(const std::ptrdiff_t index, const double& value) {
     if (index >= ssize_ || index < 0) {
         throw std::invalid_argument("out of range");
     }
-    if (ssize_ + 1 <= realSize_) {
+    if (ssize_ + 1 <= capacity_) {
         ssize_ += 1;
     } else {
         resize(ssize_ + 1);
