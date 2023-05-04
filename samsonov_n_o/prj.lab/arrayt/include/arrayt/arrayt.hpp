@@ -19,6 +19,7 @@ public:
     ~ArrayT() { delete[] data_; }
 
     ArrayT& operator=(const ArrayT& rhs);
+    ArrayT& operator=(ArrayT&& rhs);
     // double& at(const std::ptrdiff_t newIndex);
     // const double at(const std::ptrdiff_t newIndex) const;
     [[nodiscard]] T& operator[](const std::ptrdiff_t index);
@@ -96,6 +97,17 @@ ArrayT<T>& ArrayT<T>::operator=(const ArrayT& rhs) {
         for (std::ptrdiff_t i = 0; i < rhs.size_; ++i) {
             data_[i] = rhs.data_[i];
         }
+    }
+    return *this;
+}
+
+template<typename T>
+ArrayT<T>& ArrayT<T>::operator=(ArrayT<T>&& other) {
+    if (this != &other) {
+        size_ = std::move(other.size_);
+        capacity_ = std::move(other.capacity_);
+        delete[] data_;
+        data_ = std::move(other.data_);
     }
     return *this;
 }
