@@ -3,6 +3,8 @@
 #include <atomic>
 #include <mutex>
 #include <vector>
+#include <chrono>
+#include <map>
 
 namespace lockFreeQueue {
     
@@ -61,7 +63,7 @@ namespace lockFreeQueue {
         bool is_empty() const;
     };
 
-    /* Implementation of the LfQueue class */
+    /* Реализация класса LfQueue */
 
     template <typename T>
     LfQueue<T>::LfQueue(unsigned BufSize) : buffer(BufSize), buffer_mask(BufSize - 1) {
@@ -75,7 +77,7 @@ namespace lockFreeQueue {
             throw std::runtime_error("buffer size is not power of 2");
         }
         for (unsigned i = 0; i != BufSize; ++i) {
-            buffer[i].sequence.store(i, std::memory_order_relaxed); // fill in the initial sequence
+            buffer[i].sequence.store(i, std::memory_order_relaxed); // заполнение изначальной последовательности
         }
         enqueuePos.store(0, std::memory_order_relaxed);
         dequeuePos.store(0, std::memory_order_relaxed);
@@ -84,66 +86,61 @@ namespace lockFreeQueue {
     template <typename T>
     bool LfQueue<T>::push(T data) {
         CellTy* cell;
-        unsigned Pos; // current position to add element
-        bool Res = false; // method call state
-        // CAS-loop
-        while (!Res) {
-            Pos = enqueuePos.load(std::memory_order_relaxed); // Getting the current position where we put the element
+        unsigned position; // текущая позиция для добавления элемента
+        bool result = false; // статус метода
+        // CAS-цикл
+        while (!result) {
+            position = enqueuePos.load(std::memory_order_relaxed); // получение текущей позиции
             
-            // the buffer is cyclic, so you can't write to cell &buffer[Pos % buffer_mask]
-            // small performance optimization due to the fact that it will give a power of two
-            cell = &buffer[Pos & buffer_mask]; // remember unique cell
+            cell = &buffer[position & buffer_mask]; //запоминаем уникальный номер ячейки (для кругового прохода)
             
-            auto Seq = cell->sequence.load(std::memory_order_acquire); // Getting the sequence number of the current cell
-            auto Diff = static_cast<int>(Seq) - static_cast<int>(Pos); // To check if Pos is exceeded by Seq
+            auto Seq = cell->sequence.load(std::memory_order_acquire); // получение текущего уникального номера
+            auto Diff = static_cast<int>(Seq) - static_cast<int>(position);
 
-            // the queue is full or the queue has moved forward in a circle
-            // if at least 1 producer managed to push
+            // очередь полна или произошёл круговой проход
+            // если хотя бы 1 производитель успел запушить
             if (Diff < 0) {
-                return false;
+                return false; // continue?
             }
-            // If sequence was not affected by other producers ()
-            // check if it is possible to increase the position of the cell in the queue
+
             if (Diff == 0) {
-                // the second (default) memory model is std::memory_order_seq_cst (is it possible to relax?)
-                Res = enqueuePos.compare_exchange_weak(Pos, Pos + 1, std::memory_order_relaxed);
+                // вторая (по умолчанию) модель памяти — std::memory_order_seq_cst (можно ли ее ослабить?)
+                result = enqueuePos.compare_exchange_weak(position, position + 1, std::memory_order_relaxed);
             }
         }
         
-        // move element to head and write to sequence
+        // обновление позиции
         cell->data = std::move(data);
-        cell->sequence.store(Pos + 1, std::memory_order_release);
+        cell->sequence.store(position + 1, std::memory_order_release);
         return true;
     }
 
     template <typename T>
-    bool LfQueue<T>::pop(T &data) {
+    bool LfQueue<T>::pop(T& data) {
         CellTy* cell;
-        unsigned Pos;
-        bool Res = false;
+        unsigned position;
+        bool result = false;
 
-        while (!Res) {
-            // get the current position from which to remove the element from the queue
-            Pos = dequeuePos.load(std::memory_order_relaxed);
-            cell = &buffer[Pos & buffer_mask];
+        while (!result) {
+            position = dequeuePos.load(std::memory_order_relaxed);
+            cell = &buffer[position & buffer_mask];
             auto Seq = cell->sequence.load(std::memory_order_acquire);
-            auto Diff = static_cast<int>(Seq) - static_cast<int>(Pos + 1);
+            auto Diff = static_cast<int>(Seq) - static_cast<int>(position + 1);
 
-            // if the queue is empty, then return without entering the CAS-loop
+            // проверка пустоты очереди перед входом в CAS
             if (Diff < 0) {
                 return false;
             }
-            // Checking if Seq has been modified by other producers
-            // and has not been modified by consumers
-            // and can we increment Pos
+            // Проверка того, был ли Seq изменен другими производителями
+            // и не был ли изменен потребителями
             if (Diff == 0) {
-                Res = dequeuePos.compare_exchange_weak(Pos, Pos + 1);
+                result = dequeuePos.compare_exchange_weak(position, position + 1, std::memory_order_relaxed);
             }
         }
 
-        // read and update element for next buffer cycle
+        // обновление элемента для следующего буферного цикла
         data = std::move(cell->data);
-        cell->sequence.store(Pos + buffer_mask + 1, std::memory_order_release);
+        cell->sequence.store(position + buffer_mask + 1, std::memory_order_release);
         return true;
     }
 
@@ -154,37 +151,74 @@ namespace lockFreeQueue {
 
 } // namespace lockFreeQueue
 
+namespace parser {
+    std::atomic<int> ntasks{1000};  /// Количество задач
+    std::vector<int> Consumed;      /// Вектор потреблённых задач
+    std::mutex ConsMut;             /// Блокировка для потребления задач
+    unsigned int bufsize{128};      /// Размер буфера
+    unsigned int constime{0};       /// Время на потребление задачи
+    unsigned int prodtime{0};       /// Время на производство задачи
+    unsigned int nprodthreads{1};   /// Количество производящих потоков
+    unsigned int nconsthreads{1};   /// Количество потребляющих потоков
+    /**
+     * \brief Парсер переданных опций для очереди
+    */
+    int parse(int argc, char* argv[]) {
+        std::map<std::string, std::string> arguments;
+
+        for (int i = 1; i < argc; ++i) {
+            arguments[argv[i]] = (i + 1 < argc) ? argv[i + 1] : "";
+        }
+        arguments.count("--ntasks") > 0 ? ntasks = std::stoi(arguments["--ntasks"]) : ntasks = 1000;
+        arguments.count("--bufsize") > 0 ? bufsize = std::stoi(arguments["--bufsize"]) : bufsize = 128;
+        arguments.count("--constime") > 0 ? constime = std::stoi(arguments["--constime"]) : constime = 0;
+        arguments.count("--prodtime") > 0 ? prodtime = std::stoi(arguments["--prodtime"]) : prodtime = 0;
+        arguments.count("--nprodthreads") > 0 ? nprodthreads = std::stoi(arguments["--nprodthreads"]) : nprodthreads = 1;
+        arguments.count("--nconsthreads") > 0 ? nconsthreads = std::stoi(arguments["--nconsthreads"]) : nconsthreads = 1;
+
+        if (arguments.count("--help") > 0 || argc == 1) {
+            std::cout << "Опции:" << std::endl;
+            std::cout << "--ntasks = " << ntasks << " : количество задач" << std::endl;
+            std::cout << "--bufsize = " << bufsize << " : размер буфера очереди" << std::endl;
+            std::cout << "--constime = " << constime << " : время для потребления одной задачи" << std::endl;
+            std::cout << "--prodtime = " << prodtime << " : время для производства одной задачи" << std::endl;
+            std::cout << "--nprodthreads = " << nprodthreads << " : количество производственных потоков" << std::endl;
+            std::cout << "--nconsthreads = " << nconsthreads << " : количество потребительных потоков" << std::endl;
+        }
+
+        return 0;
+    }
+} // namespace parser
+
 namespace lockFreeQueueProcessor {
     using namespace lockFreeQueue;
-    
-    std::atomic<int> NTasks; // Количество задач
-    std::vector<int> Consumed; // Вектор потреблённых задач
-    std::mutex ConsMut; // Блокировка для потребления задач 
+    using namespace parser;
 
     /**
      * \brief Добавление задач в конец очереди
      * \param queue Ссылка на очередь, в которую будут добавлены задачи
     */
-    void produce(LfQueue<int>& queue, int ctime = 0) {
+    void produce(LfQueue<int>& queue, int ctime = constime) {
         for (;;) {
-            int N = NTasks.load();
+            int N = ntasks.load();
 
-            // checking for the need to enter the CAS-loop
+            // проверка на необходимость входа в CAS
             if (N < 0) {
                 break;
             }
-            while (!NTasks.compare_exchange_weak(N, N - 1, std::memory_order_relaxed)) {
-                // recheck to avoid data-races
+            while (!ntasks.compare_exchange_weak(N, N - 1, std::memory_order_relaxed)) {
+                // повторная проверка, чтобы избежать гонок данных
                 if (N < 0) {
                     return;
                 }
                 std::this_thread::yield();
             }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(ctime));            
             while (!queue.push(N)) { // trying to push
                 std::this_thread::yield();
             }
             
-            std::this_thread::sleep_for(std::chrono::milliseconds(ctime));
         }
     }
 
@@ -192,30 +226,20 @@ namespace lockFreeQueueProcessor {
      * \brief Потребление задач из начала очереди
      * \param queue Ссылка на очередь, из которой будут потреблены задачи
     */
-    void consume(LfQueue<int>& queue, int ptime = 0) {
+    void consume(LfQueue<int>& queue, int ptime = prodtime) {
         for (;;) {
-            int N = NTasks.load();
+            int N = ntasks.load();
             if (N < 0 && queue.is_empty()) {
                 break;
             }
-            bool Succ = queue.pop(N); // trying to pop
+            bool Succ = queue.pop(N); // пытаемся сделать pop
             if (Succ) {
-                // a record of what was consumed by consumers
+                // запись того, что было потреблено потребителями
                 std::lock_guard<std::mutex> Lk{ConsMut};
-                Consumed.push_back(N); // if pop succeeded, then write to Consumed
-            }
-
+                Consumed.push_back(N); // если получился pop, то пишем в Consumed
+            }            
             std::this_thread::sleep_for(std::chrono::milliseconds(ptime));
         }
     }
 
 } // namespace lockFreeQueueProcessor
-
-namespace parser {
-    int NTasks = 1000;
-    int BufSize = 128;
-    int ConsTime = 0;
-    int ProdTime = 0;
-    
-    int parse(int argc, char* argv[]);
-}
