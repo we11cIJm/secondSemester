@@ -1,6 +1,6 @@
 enable_testing()
 
-option(TESTING_MODE "Enable testing mode" ON)
+option(TESTING_MODE "Enable testing mode" OFF)
 
 if (TESTING_MODE)
     find_package(GTest CONFIG REQUIRED)
