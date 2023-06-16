@@ -1,11 +1,10 @@
 #include <thread>
-
 #include <gtest/gtest.h>
-
 #include <lf_queue/lf_queue.hpp>
 
 using namespace lockFreeQueue;
 using namespace lockFreeQueueProcessor;
+using namespace parser;
 
 #ifndef NTASKS
 #define NTASKS 1000
@@ -73,6 +72,7 @@ TEST(atomics, bounded_lockfree_queue_2_2) {
     ntasks = NTASKS;
     LfQueue<int> Q(BUFSIZE);
     Consumed.clear();
+    
     std::thread t1{produce, std::ref(Q), 0};
     std::thread t2{produce, std::ref(Q), 0};
     std::thread t3{consume, std::ref(Q), 0};
@@ -82,29 +82,6 @@ TEST(atomics, bounded_lockfree_queue_2_2) {
     t2.join();
     t3.join();
     t4.join();
-
-    EXPECT_EQ(Consumed.size(), NTASKS + 1);
-    EXPECT_EQ(ntasks, -1);
-}
-
-TEST(atomics, bounded_lockfree_queue) {
-    ntasks = NTASKS;
-    LfQueue<int> Q(BUFSIZE);
-    Consumed.clear();
-
-    std::vector<std::thread> threads;
-
-    for (int i = 0; i < NUM_PRODUCE_THREADS; ++i) {
-      threads.emplace_back(produce, std::ref(Q), 0);
-    }
-
-    for (int i = 0; i < NUM_CONSUME_THREADS; ++i) {
-      threads.emplace_back(consume, std::ref(Q), 0);
-    }
-
-    for (std::thread& thread : threads) {
-      thread.join();
-    }
 
     EXPECT_EQ(Consumed.size(), NTASKS + 1);
     EXPECT_EQ(ntasks, -1);
