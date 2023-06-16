@@ -10,7 +10,6 @@ project(
     LANGUAGES CXX
 )
 
-find_package(GTest CONFIG REQUIRED)
 find_package(Doxygen)
 
 if (DOXYGEN_FOUND)
