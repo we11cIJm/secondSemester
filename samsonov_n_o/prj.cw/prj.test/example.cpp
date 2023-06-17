@@ -15,11 +15,11 @@ int main(int argc, char* argv[]) {
 
     std::vector<std::thread> threads;
 
-    for (int i = 0; i < parser::nprodthreads; ++i) {
+    for (size_t i = 0; i < parser::nprodthreads; ++i) {
         threads.emplace_back(produce, std::ref(queue), parser::prodtime);
     }
 
-    for (int i = 0; i < parser::nconsthreads; ++i) {
+    for (size_t i = 0; i < parser::nconsthreads; ++i) {
         threads.emplace_back(consume, std::ref(queue), parser::constime);
     }
 

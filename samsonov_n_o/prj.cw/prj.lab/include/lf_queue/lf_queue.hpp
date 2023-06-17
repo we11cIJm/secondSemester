@@ -282,13 +282,13 @@ void lockFreeQueueProcessor::timer(int argc, char** argv) {
     std::vector<std::thread> threads;
 
     auto start = std::chrono::steady_clock::now();
-    for (int i = 0; i < parser::nprodthreads; ++i) {
+    for (size_t i = 0; i < parser::nprodthreads; ++i) {
         threads.emplace_back(produce, std::ref(Q), parser::prodtime);
     }
-    for (int i = 0; i < parser::nconsthreads; ++i) {
+    for (size_t i = 0; i < parser::nconsthreads; ++i) {
         threads.emplace_back(consume, std::ref(Q), parser::constime);
     }
-    for (int i = 0; i < threads.size(); ++i) {
+    for (size_t i = 0; i < threads.size(); ++i) {
         threads[i].join();
     }
     auto end = std::chrono::steady_clock::now();
