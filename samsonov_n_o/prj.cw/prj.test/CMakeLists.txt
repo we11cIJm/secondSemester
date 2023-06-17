@@ -13,8 +13,9 @@ if (TESTING_MODE)
     
     add_executable(bench bench/lf_queue_bench.cpp)
     target_link_libraries(bench PRIVATE GTest::gtest GTest::gtest_main lf_queue)
+
+    install(TARGETS lf_queue.test bench DESTINATION lf_queueLib/bench)
 endif (TESTING_MODE)
     
 add_executable(example example.cpp)
 target_link_libraries(example PRIVATE lf_queue)
-    

@@ -30,3 +30,6 @@ endif (DOXYGEN_FOUND)
 
 add_subdirectory(prj.lab)
 add_subdirectory(prj.test)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/prj.lab DESTINATION lf_queueLib)
+install(TARGETS ${PROJECT_NAME} example DESTINATION lf_queueLib/example)
