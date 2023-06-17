@@ -14,14 +14,6 @@ using namespace parser;
 #define BUFSIZE 128
 #endif
 
-#ifndef NUM_PRODUCE_THREADS
-#define NUM_PRODUCE_THREADS 20
-#endif
-
-#ifndef NUM_CONSUME_THREADS
-#define NUM_CONSUME_THREADS 200
-#endif
-
 TEST(atomics, bounded_lockfree_queue_1_1) {
     ntasks = NTASKS;
     LfQueue<int> Q(BUFSIZE);
