@@ -34,7 +34,7 @@ namespace lockFreeQueue {
         /**
          * \brief Конструктор LfQueue
          * \param BufSize Размер буфера
-         * \throw std::runtime_error, когда размер буфера не соответвует документации
+         * \throw std::runtime_error, размер буфера должен быть степенью 2
         */
         explicit LfQueue(unsigned BufSize);
 
@@ -219,7 +219,7 @@ bool parser::parse(int argc, char** argv) {
     arguments.count("--time") > 0 ? lockFreeQueueProcessor::timer(argc, argv) : void();
     
     if (arguments.count("--help") > 0 || argc == 1) {
-        std::cout << "Опции:" << std::endl;
+        std::cout << "Опции:\n" << std::endl;
         std::cout << "--time : количество производства и потребления задач\n\n";
         std::cout << "--ntasks = " << ntasks << " : количество задач" << std::endl;
         std::cout << "--bufsize = " << bufsize << " : размер буфера очереди" << std::endl;
