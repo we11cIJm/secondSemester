@@ -277,3 +277,4 @@ TEST_CASE("Test Rational operator>>") {
     CHECK(r.GetDen() == 9);
     // CHECK(Rational(7, 9) == r);
 }
+
