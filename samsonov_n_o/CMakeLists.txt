@@ -8,7 +8,6 @@ set(CMAKE_CXX_STANDARD 20)
 project("libraries")
 
 find_package(doctest CONFIG REQUIRED)
-find_package(argParser CONFIG REQUIRED)
 
 add_subdirectory(prj.cw)
 add_subdirectory(prj.lab)
