@@ -225,8 +225,9 @@ bool parser::parse(int argc, char** argv) {
         std::cout << "--bufsize = " << bufsize << " : queue buffer size" << std::endl;
         std::cout << "--constime = " << constime << " : time to consume one task" << std::endl;
         std::cout << "--prodtime = " << prodtime << " : time to produce one task" << std::endl;
-        std::cout << "--nprodthreads = " << nprodthreads << " : number of produce threads" << std::endl;
-        std::cout << "--nconsthreads = " << nconsthreads << " : number of consume threads" << std::endl;
+        std::cout << "--nconsthreads = " << nconsthreads << " : number of consuming threads" << std::endl;
+        std::cout << "--nprodthreads = " << nprodthreads << " : number of producing threads" << std::endl;
+
         return false;
     }
     return true;
