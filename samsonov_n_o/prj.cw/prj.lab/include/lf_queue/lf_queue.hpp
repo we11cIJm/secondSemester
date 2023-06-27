@@ -219,14 +219,14 @@ bool parser::parse(int argc, char** argv) {
     arguments.count("--time") > 0 ? lockFreeQueueProcessor::timer(argc, argv) : void();
     
     if (arguments.count("--help") > 0 || argc == 1) {
-        std::cout << "Опции:\n" << std::endl;
-        std::cout << "--time : количество производства и потребления задач\n\n";
-        std::cout << "--ntasks = " << ntasks << " : количество задач" << std::endl;
-        std::cout << "--bufsize = " << bufsize << " : размер буфера очереди" << std::endl;
-        std::cout << "--constime = " << constime << " : время для потребления одной задачи" << std::endl;
-        std::cout << "--prodtime = " << prodtime << " : время для производства одной задачи" << std::endl;
-        std::cout << "--nprodthreads = " << nprodthreads << " : количество производственных потоков" << std::endl;
-        std::cout << "--nconsthreads = " << nconsthreads << " : количество потребительных потоков" << std::endl;
+        std::cout << "Options:\n" << std::endl;
+        std::cout << "--time : total time of producing and consuming\n\n";
+        std::cout << "--ntasks = " << ntasks << " : number of tasks" << std::endl;
+        std::cout << "--bufsize = " << bufsize << " : queue buffer size" << std::endl;
+        std::cout << "--constime = " << constime << " : time to consume one task" << std::endl;
+        std::cout << "--prodtime = " << prodtime << " : time to produce one task" << std::endl;
+        std::cout << "--nprodthreads = " << nprodthreads << " : number of produce threads" << std::endl;
+        std::cout << "--nconsthreads = " << nconsthreads << " : number of consume threads" << std::endl;
         return false;
     }
     return true;
