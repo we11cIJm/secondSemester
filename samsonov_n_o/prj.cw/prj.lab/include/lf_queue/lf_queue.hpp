@@ -1,3 +1,6 @@
+#ifndef BOUNDED_LF_QUEUE
+#define BOUNDED_LF_QUEUE
+
 #include <iostream>
 #include <thread>
 #include <atomic>
@@ -297,3 +300,5 @@ void lockFreeQueueProcessor::timer(int argc, char** argv) {
     std::cout << "Total duration: " << durationTime.count() << " ms" << std::endl;
 
 }
+
+#endif
